@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../Home/home_page.dart';
-import 'logic/auth_event.dart';
 import 'logic/auth_bloc.dart';
 import 'logic/auth_state.dart';
 import '../../../../core/utils/validators.dart';
-import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import 'signup_page.dart';
 
@@ -26,22 +23,25 @@ class _LoginPageState extends State<LoginPage> {
 
   bool get isValid =>
       emailError == null &&
-          passError == null &&
-          email.text.isNotEmpty &&
-          password.text.isNotEmpty;
+      passError == null &&
+      email.text.isNotEmpty &&
+      password.text.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        // ⭐ SAME BACKGROUND COLOR AS SPLASH (dark navy)
+        backgroundColor: const Color(0xFF0A0D14),
+        resizeToAvoidBottomInset: false,
 
-      // ⭐ SAME BACKGROUND COLOR AS SPLASH (dark navy)
-      backgroundColor: const Color(0xFF0A0D14),
-
-      body: BlocConsumer<AuthBloc, AuthState>(
+        body: BlocConsumer<AuthBloc, AuthState>(
         listener: (_, state) {
           if (state is AuthError) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
 
@@ -66,10 +66,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 const Text(
                   "Sign in to continue renting your dream car",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 15,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 15),
                 ),
 
                 const SizedBox(height: 40),
@@ -85,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.black.withOpacity(0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
-                      )
+                      ),
                     ],
                   ),
 
@@ -94,8 +91,10 @@ class _LoginPageState extends State<LoginPage> {
                       AppTextField(
                         hintText: "Email",
                         controller: email,
-                        prefixIcon: const Icon(Icons.email_outlined,
-                            color: Colors.white),
+                        prefixIcon: const Icon(
+                          Icons.email_outlined,
+                          color: Colors.white,
+                        ),
                         hintColor: Colors.white54,
                         textColor: Colors.white,
                         onChanged: (v) =>
@@ -109,8 +108,10 @@ class _LoginPageState extends State<LoginPage> {
                         hintText: "Password",
                         controller: password,
                         isPassword: true,
-                        prefixIcon:
-                        const Icon(Icons.lock_outline, color: Colors.white),
+                        prefixIcon: const Icon(
+                          Icons.lock_outline,
+                          color: Colors.white,
+                        ),
                         hintColor: Colors.white54,
                         textColor: Colors.white,
                         onChanged: (v) =>
@@ -126,17 +127,19 @@ class _LoginPageState extends State<LoginPage> {
                         child: ElevatedButton(
                           onPressed: isValid
                               ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => const HomePage()),
-                            );
-                            // context.read<AuthBloc>().add(
-                            //   LoginEvent(
-                            //     email.text.trim(),
-                            //     password.text.trim(),
-                            //   ),
-                            // );
-                          }
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const HomePage(),
+                                    ),
+                                  );
+                                  // context.read<AuthBloc>().add(
+                                  //   LoginEvent(
+                                  //     email.text.trim(),
+                                  //     password.text.trim(),
+                                  //   ),
+                                  // );
+                                }
                               : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -185,6 +188,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
         },
+      ),
       ),
     );
   }

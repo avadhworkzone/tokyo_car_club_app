@@ -26,20 +26,22 @@ class _SignupPageState extends State<SignupPage> {
 
   bool get isValid =>
       nameError == null &&
-          emailError == null &&
-          passError == null &&
-          name.text.isNotEmpty &&
-          email.text.isNotEmpty &&
-          password.text.isNotEmpty;
+      emailError == null &&
+      passError == null &&
+      name.text.isNotEmpty &&
+      email.text.isNotEmpty &&
+      password.text.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        // ⭐ Same background color as Login screen
+        backgroundColor: const Color(0xFF0A0D14),
+        resizeToAvoidBottomInset: false,
 
-      // ⭐ Same background color as Login screen
-      backgroundColor: const Color(0xFF0A0D14),
-
-      body: BlocConsumer<AuthBloc, AuthState>(
+        body: BlocConsumer<AuthBloc, AuthState>(
         listener: (_, state) {
           if (state is AuthSuccess) Navigator.pop(context);
         },
@@ -67,10 +69,7 @@ class _SignupPageState extends State<SignupPage> {
 
                 const Text(
                   "Join the club and rent luxury cars anytime",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 15,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 15),
                 ),
 
                 const SizedBox(height: 40),
@@ -86,7 +85,7 @@ class _SignupPageState extends State<SignupPage> {
                         color: Colors.black.withOpacity(0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
-                      )
+                      ),
                     ],
                   ),
 
@@ -96,8 +95,10 @@ class _SignupPageState extends State<SignupPage> {
                       AppTextField(
                         hintText: "Full Name",
                         controller: name,
-                        prefixIcon: const Icon(Icons.person_outline,
-                            color: Colors.white),
+                        prefixIcon: const Icon(
+                          Icons.person_outline,
+                          color: Colors.white,
+                        ),
                         hintColor: Colors.white54,
                         textColor: Colors.white,
                         onChanged: (v) =>
@@ -111,8 +112,10 @@ class _SignupPageState extends State<SignupPage> {
                       AppTextField(
                         hintText: "Email",
                         controller: email,
-                        prefixIcon: const Icon(Icons.email_outlined,
-                            color: Colors.white),
+                        prefixIcon: const Icon(
+                          Icons.email_outlined,
+                          color: Colors.white,
+                        ),
                         hintColor: Colors.white54,
                         textColor: Colors.white,
                         onChanged: (v) =>
@@ -127,8 +130,10 @@ class _SignupPageState extends State<SignupPage> {
                         hintText: "Password",
                         controller: password,
                         isPassword: true,
-                        prefixIcon: const Icon(Icons.lock_outline,
-                            color: Colors.white),
+                        prefixIcon: const Icon(
+                          Icons.lock_outline,
+                          color: Colors.white,
+                        ),
                         hintColor: Colors.white54,
                         textColor: Colors.white,
                         onChanged: (v) =>
@@ -144,14 +149,14 @@ class _SignupPageState extends State<SignupPage> {
                         child: ElevatedButton(
                           onPressed: isValid
                               ? () {
-                            context.read<AuthBloc>().add(
-                              SignUpEvent(
-                                name.text.trim(),
-                                email.text.trim(),
-                                password.text.trim(),
-                              ),
-                            );
-                          }
+                                  // context.read<AuthBloc>().add(
+                                  //   SignUpEvent(
+                                  //     name.text.trim(),
+                                  //     email.text.trim(),
+                                  //     password.text.trim(),
+                                  //   ),
+                                  // );
+                                }
                               : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -190,11 +195,12 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           );
         },
+      ),
       ),
     );
   }

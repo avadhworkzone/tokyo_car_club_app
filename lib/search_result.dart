@@ -11,38 +11,33 @@ class SearchResultsPage extends StatefulWidget {
 class _SearchResultsPageState extends State<SearchResultsPage> {
   int selectedFilter = 0;
 
-  final filters = [
-    "Price",
-    "Seats",
-    "Transmission",
-    "Fuel",
-    "Car Type",
-  ];
+  final filters = ["Price", "Seats", "Transmission", "Fuel", "Car Type"];
 
-  final sortingOptions = [
-    "Relevance",
-    "Price: Low → High",
-    "Rating",
-  ];
+  final sortingOptions = ["Relevance", "Price: Low → High", "Rating"];
 
   String selectedSorting = "Relevance";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0A0D14),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: const Color(0xFF0A0D14),
+        resizeToAvoidBottomInset: false,
 
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A0D14),
-
         elevation: 0,
-        title: const Text("Search Results", style: TextStyle(color: Colors.white)),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          "Search Results",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
 
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           // ⭐ FILTERS BAR
           SizedBox(
             height: 46,
@@ -56,7 +51,10 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   onTap: () => setState(() => selectedFilter = i),
                   child: Container(
                     margin: const EdgeInsets.only(right: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: isActive ? Colors.white : const Color(0xFF141820),
                       borderRadius: BorderRadius.circular(30),
@@ -87,8 +85,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                 filled: true,
                 fillColor: const Color(0xFF141820),
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: const BorderSide(color: Colors.white24)),
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: Colors.white24),
+                ),
               ),
               items: sortingOptions.map((s) {
                 return DropdownMenuItem(
@@ -109,8 +108,10 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
               itemCount: 5,
               itemBuilder: (_, i) => GestureDetector(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (_) => const CarDetailsPage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CarDetailsPage()),
+                  );
                 },
 
                 child: Container(
@@ -127,30 +128,41 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                       // IMAGE
                       ClipRRect(
                         borderRadius: BorderRadius.circular(14),
-                        child: Image.asset("assets/images/car.png",
-                            height: 160, width: double.infinity, fit: BoxFit.cover),
+                        child: Image.asset(
+                          "assets/images/car.png",
+                          height: 160,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
 
                       const SizedBox(height: 14),
 
                       // NAME
-                      const Text("BMW 5 Series - Luxury",
-                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                      const Text(
+                        "BMW 5 Series - Luxury",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
 
                       const SizedBox(height: 6),
 
                       // TAGS
-                      Row(
-                        children: [
-                          _tag("Automatic"),
-                          _tag("Petrol"),
-                        ],
-                      ),
+                      Row(children: [_tag("Automatic"), _tag("Petrol")]),
 
                       const SizedBox(height: 10),
 
-                      const Text("₹4,500/day",
-                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+                      const Text(
+                        "₹4,500/day",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -158,6 +170,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
@@ -172,4 +185,3 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     child: Text(text, style: const TextStyle(color: Colors.white70)),
   );
 }
-
