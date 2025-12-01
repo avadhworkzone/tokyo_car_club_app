@@ -16,13 +16,13 @@ class NotificationsScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => NotificationBloc()..add(LoadNotificationsEvent()),
       child: Scaffold(
-        backgroundColor: AppColors.darkBackground,
+        backgroundColor: AppColors.background(context),
         appBar: AppBar(
           title: Text(
             StringUtils.t('notifications'),
-            style: const TextStyle(color: AppColors.white),
+            style: TextStyle(color: AppColors.textPrimary(context)),
           ),
-          backgroundColor: AppColors.darkBackground,
+          backgroundColor: AppColors.background(context),
           elevation: 0,
           leading: Padding(
             padding: const EdgeInsets.all(13.0),
@@ -59,13 +59,13 @@ class NotificationsScreen extends StatelessWidget {
                       Icon(
                         Icons.notifications_none,
                         size: 64,
-                        color: AppColors.white54,
+                        color: AppColors.textTertiary(context),
                       ),
                       const SizedBox(height: 16),
                       AppText(
                         StringUtils.t('no_notifications'),
                         style: TextStyle(
-                          color: AppColors.white54,
+                          color: AppColors.textTertiary(context),
                           fontSize: 16,
                         ),
                       ),
@@ -109,7 +109,7 @@ class NotificationsScreen extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppTheme.navy,
+              color: AppColors.cardBackground(context),
               borderRadius: BorderRadius.circular(12),
               border: isRead ? null : Border.all(
                 color: AppColors.blueAccent.withOpacity(0.3),
@@ -142,7 +142,7 @@ class NotificationsScreen extends StatelessWidget {
                       AppText(
                         notification['carName'],
                         style: TextStyle(
-                          color: AppColors.white,
+                          color: AppColors.textPrimary(context),
                           fontSize: 14,
                           fontWeight: isRead ? FontWeight.w500 : FontWeight.bold,
                         ),
@@ -153,7 +153,7 @@ class NotificationsScreen extends StatelessWidget {
                       AppText(
                         notification['message'],
                         style: TextStyle(
-                          color: isRead ? AppTheme.platinum : AppColors.white,
+                          color: isRead ? AppColors.textTertiary(context) : AppColors.textPrimary(context),
                           fontSize: 13,
                         ),
                       ),
@@ -163,7 +163,7 @@ class NotificationsScreen extends StatelessWidget {
                       AppText(
                         notification['timeAgo'],
                         style: TextStyle(
-                          color: AppColors.white54,
+                          color: AppColors.textTertiary(context),
                           fontSize: 11,
                         ),
                       ),

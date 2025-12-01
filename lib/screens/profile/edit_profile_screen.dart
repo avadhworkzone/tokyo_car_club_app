@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tokyo_car_club/core/utils/string_utils.dart';
 import 'package:tokyo_car_club/core/constants/app_colors.dart';
@@ -21,11 +22,24 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
-  
+  bool _isInitialized = false;
+
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+
+  String? nameError;
+  String? emailError;
+  String? phoneError;
+
+  bool get isValid =>
+      nameError == null &&
+      emailError == null &&
+      phoneError == null &&
+      _nameController.text.isNotEmpty &&
+      _emailController.text.isNotEmpty &&
+      _phoneController.text.isNotEmpty;
 
   @override
   void initState() {
@@ -41,13 +55,10 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutBack,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutBack),
+        );
     _startAnimations();
   }
 
@@ -73,21 +84,25 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     return BlocProvider(
       create: (context) => ProfileBloc()..add(LoadProfileEvent()),
       child: Scaffold(
-        backgroundColor: AppColors.darkBackground,
+        backgroundColor: AppColors.background(context),
         appBar: AppBar(
           title: Text(
             StringUtils.t('edit_profile'),
-            style: const TextStyle(color: AppColors.white),
+            style: TextStyle(color: AppColors.textPrimary(context)),
           ),
-          backgroundColor: AppColors.darkBackground,
+          backgroundColor: AppColors.background(context),
           elevation: 0,
           leading: Padding(
-            padding: const EdgeInsets.all(13.0),
+            padding: const EdgeInsets.all(9.0),
             child: InkWell(
               onTap: () => Navigator.pop(context),
-              child: const CircleAvatar(
-                backgroundColor: AppColors.white,
-                child: Icon(Icons.arrow_back, color: AppColors.black, size: 20),
+              child: CircleAvatar(
+                backgroundColor: AppColors.surface(context),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: AppColors.textPrimary(context),
+                  size: 20,
+                ),
               ),
             ),
           ),
@@ -117,10 +132,11 @@ class _EditProfileScreenState extends State<EditProfileScreen>
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (state is ProfileLoaded) {
+            if (state is ProfileLoaded && !_isInitialized) {
               _nameController.text = state.profile['name'];
               _emailController.text = state.profile['email'];
               _phoneController.text = state.profile['phone'];
+              _isInitialized = true;
             }
 
             return FadeTransition(
@@ -147,15 +163,17 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                         width: double.infinity,
                         child: AppButton(
                           label: StringUtils.t('save'),
-                          onPressed: () {
-                            context.read<ProfileBloc>().add(
-                              UpdateProfileEvent(
-                                name: _nameController.text,
-                                email: _emailController.text,
-                                phone: _phoneController.text,
-                              ),
-                            );
-                          },
+                          onPressed: isValid
+                              ? () {
+                                  context.read<ProfileBloc>().add(
+                                    UpdateProfileEvent(
+                                      name: _nameController.text,
+                                      email: _emailController.text,
+                                      phone: _phoneController.text,
+                                    ),
+                                  );
+                                }
+                              : null,
                         ),
                       ),
                     ),
@@ -189,17 +207,17 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: AppColors.surface(context),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppColors.darkBackground,
+                      color: AppColors.background(context),
                       width: 2,
                     ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.camera_alt,
                     size: 20,
-                    color: AppColors.black,
+                    color: AppColors.textPrimary(context),
                   ),
                 ),
               ),
@@ -221,9 +239,32 @@ class _EditProfileScreenState extends State<EditProfileScreen>
 
   List<Widget> _buildAnimatedFormFields() {
     final fields = [
-      {'controller': _nameController, 'label': StringUtils.t('name'), 'icon': Icons.person},
-      {'controller': _emailController, 'label': StringUtils.t('email'), 'icon': Icons.email},
-      {'controller': _phoneController, 'label': StringUtils.t('phone'), 'icon': Icons.phone},
+      {
+        'controller': _nameController,
+        'label': StringUtils.t('name'),
+        'icon': Icons.person,
+        'error': nameError,
+        'onChanged': _validateName,
+      },
+      {
+        'controller': _emailController,
+        'label': StringUtils.t('email'),
+        'icon': Icons.email,
+        'error': emailError,
+        'onChanged': _validateEmail,
+      },
+      {
+        'controller': _phoneController,
+        'label': StringUtils.t('phone'),
+        'icon': Icons.phone,
+        'error': phoneError,
+        'onChanged': _validatePhone,
+        'inputFormatters': [
+          LengthLimitingTextInputFormatter(10),
+          FilteringTextInputFormatter.digitsOnly,
+        ],
+        'prefixText': '+91 ',
+      },
     ];
 
     return fields.asMap().entries.map((entry) {
@@ -242,10 +283,33 @@ class _EditProfileScreenState extends State<EditProfileScreen>
               opacity: animationValue,
               child: Column(
                 children: [
-                  _buildTextField(
-                    controller: field['controller'] as TextEditingController,
-                    label: field['label'] as String,
-                    icon: field['icon'] as IconData,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTextField(
+                        controller:
+                            field['controller'] as TextEditingController,
+                        label: field['label'] as String,
+                        icon: field['icon'] as IconData,
+                        hasError: field['error'] != null,
+                        onChanged: field['onChanged'] as ValueChanged<String>?,
+                        inputFormatters:
+                            field['inputFormatters']
+                                as List<TextInputFormatter>?,
+                        prefixText: field['prefixText'] as String?,
+                      ),
+                      if (field['error'] != null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12, top: 4),
+                          child: Text(
+                            field['error'] as String,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -257,15 +321,57 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     }).toList();
   }
 
+  void _validateName(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        nameError = StringUtils.t('name required');
+      } else if (value.length < 2) {
+        nameError = StringUtils.t('name too short');
+      } else {
+        nameError = null;
+      }
+    });
+  }
+
+  void _validateEmail(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        emailError = StringUtils.t('email required');
+      } else if (!RegExp(
+        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}\$',
+      ).hasMatch(value)) {
+        emailError = StringUtils.t('email invalid');
+      } else {
+        emailError = null;
+      }
+    });
+  }
+
+  void _validatePhone(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        phoneError = StringUtils.t('phone required');
+      } else if (value.length != 10 || !RegExp(r'^[0-9]+$').hasMatch(value)) {
+        phoneError = StringUtils.t('phone invalid');
+      } else {
+        phoneError = null;
+      }
+    });
+  }
+
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
     required IconData icon,
+    bool hasError = false,
+    required ValueChanged<String>? onChanged,
+    List<TextInputFormatter>? inputFormatters,
+    String? prefixText,
   }) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
-        color: AppTheme.navy,
+        color: AppColors.cardBackground(context),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -277,19 +383,38 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
       child: TextField(
         controller: controller,
-        style: const TextStyle(color: AppColors.white),
+        style: TextStyle(color: AppColors.textPrimary(context)),
+        inputFormatters: inputFormatters,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: AppTheme.platinum),
+          labelStyle: TextStyle(color: AppColors.textSecondary(context)),
           prefixIcon: Icon(icon, color: AppColors.blueAccent),
+          prefixText: prefixText,
+          prefixStyle: TextStyle(color: AppColors.textPrimary(context)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: hasError
+                  ? Colors.red.withOpacity(0.5)
+                  : Colors.transparent,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: hasError ? Colors.red : AppColors.blueAccent,
+              width: 2,
+            ),
           ),
           filled: true,
           fillColor: Colors.transparent,
           contentPadding: const EdgeInsets.all(16),
         ),
+        onChanged: onChanged,
       ),
     );
   }

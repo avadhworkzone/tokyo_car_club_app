@@ -43,21 +43,25 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
     return BlocProvider(
       create: (context) => ChatBloc()..add(LoadChatEvent()),
       child: Scaffold(
-        backgroundColor: AppColors.darkBackground,
+        backgroundColor: AppColors.background(context),
         appBar: AppBar(
           title: Text(
             StringUtils.t('support'),
-            style: const TextStyle(color: AppColors.white),
+            style: TextStyle(color: AppColors.textPrimary(context)),
           ),
-          backgroundColor: AppColors.darkBackground,
+          backgroundColor: AppColors.background(context),
           elevation: 0,
           leading: Padding(
-            padding: const EdgeInsets.all(13.0),
+            padding: const EdgeInsets.all(10.0),
             child: InkWell(
               onTap: () => Navigator.pop(context),
-              child: const CircleAvatar(
-                backgroundColor: AppColors.white,
-                child: Icon(Icons.arrow_back, color: AppColors.black, size: 20),
+              child: CircleAvatar(
+                backgroundColor: AppColors.surface(context),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: AppColors.textPrimary(context),
+                  size: 20,
+                ),
               ),
             ),
           ),
@@ -77,7 +81,7 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
               return Center(
                 child: AppText(
                   state.message,
-                  style: const TextStyle(color: AppColors.white),
+                  style: TextStyle(color: AppColors.textPrimary(context)),
                 ),
               );
             }
@@ -87,7 +91,7 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
                 children: [
                   // Quick Reply Suggestions
                   _buildQuickReplies(context),
-                  
+
                   // Chat Messages
                   Expanded(
                     child: ListView.builder(
@@ -100,7 +104,7 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
                       },
                     ),
                   ),
-                  
+
                   // Message Input
                   _buildMessageInput(context),
                 ],
@@ -135,21 +139,28 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  context.read<ChatBloc>().add(SendQuickReplyEvent(quickReplies[index]));
+                  context.read<ChatBloc>().add(
+                    SendQuickReplyEvent(quickReplies[index]),
+                  );
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
-                    color: AppTheme.navy,
+                    color: AppColors.cardBackground(context),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: AppColors.blueAccent, width: 1),
                   ),
-                  child: Text(
-                    quickReplies[index],
-                    style: const TextStyle(
-                      color: AppColors.blueAccent,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                  child: Center(
+                    child: Text(
+                      quickReplies[index],
+                      style: const TextStyle(
+                        color: AppColors.blueAccent,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
@@ -168,13 +179,19 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: [
           if (!isUser) ...[
             CircleAvatar(
               radius: 16,
               backgroundColor: AppColors.blueAccent,
-              child: const Icon(Icons.support_agent, color: AppColors.white, size: 16),
+              child: const Icon(
+                Icons.support_agent,
+                color: AppColors.white,
+                size: 16,
+              ),
             ),
             const SizedBox(width: 8),
           ],
@@ -182,13 +199,15 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: isUser ? AppColors.blueAccent : AppTheme.navy,
+                color: isUser
+                    ? AppColors.blueAccent
+                    : AppColors.cardBackground(context),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
                 messageText,
                 style: TextStyle(
-                  color: isUser ? AppColors.white : AppColors.white,
+                  color: isUser ? Colors.white : AppColors.textPrimary(context),
                   fontSize: 14,
                 ),
               ),
@@ -198,7 +217,7 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
             const SizedBox(width: 8),
             CircleAvatar(
               radius: 16,
-              backgroundColor: AppColors.white,
+              backgroundColor: AppColors.surface(context),
               backgroundImage: const AssetImage("assets/images/user.png"),
             ),
           ],
@@ -211,7 +230,7 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.navy,
+        color: AppColors.cardBackground(context),
         border: Border(top: BorderSide(color: AppColors.white24, width: 1)),
       ),
       child: Row(
@@ -219,24 +238,29 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.darkBackground,
+                color: AppColors.background(context),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: TextField(
                 controller: _messageController,
-                style: const TextStyle(color: AppColors.white),
+                style: TextStyle(color: AppColors.textPrimary(context)),
                 decoration: InputDecoration(
                   hintText: StringUtils.t('type_message'),
-                  hintStyle: TextStyle(color: AppColors.white54),
+                  hintStyle: TextStyle(color: AppColors.textTertiary(context)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
                 onSubmitted: (message) {
                   if (message.trim().isNotEmpty) {
-                    context.read<ChatBloc>().add(SendMessageEvent(message.trim()));
+                    context.read<ChatBloc>().add(
+                      SendMessageEvent(message.trim()),
+                    );
                     _messageController.clear();
                   }
                 },
@@ -260,11 +284,7 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
                   color: AppColors.blueAccent,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.send,
-                  color: AppColors.white,
-                  size: 20,
-                ),
+                child: const Icon(Icons.send, color: AppColors.white, size: 20),
               ),
             ),
           ),

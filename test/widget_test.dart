@@ -8,13 +8,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tokyo_car_club/app.dart';
-
-import 'package:tokyo_car_club/main.dart';
+import 'package:tokyo_car_club/theme/theme_cubit.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const TokyoCarClubApp());
+    final themeCubit = ThemeCubit();
+    await tester.pumpWidget(TokyoCarClubApp(themeCubit: themeCubit));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

@@ -11,7 +11,7 @@ class SavedCarsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.darkBackground,
+      color: AppColors.background(context),
       child: Column(
         children: [
           // Header
@@ -19,8 +19,8 @@ class SavedCarsScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: AppText(
               StringUtils.t('saved_cars'),
-              style: const TextStyle(
-                color: AppColors.white,
+              style: TextStyle(
+                color: AppColors.textPrimary(context),
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -86,7 +86,7 @@ class SavedCarsScreen extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppTheme.navy,
+          color: AppColors.cardBackground(context),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -121,11 +121,7 @@ class SavedCarsScreen extends StatelessWidget {
                       color: AppColors.black.withOpacity(0.6),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      Icons.favorite,
-                      color: AppColors.accent,
-                      size: 20,
-                    ),
+                    child: Icon(Icons.favorite, color: Colors.red, size: 20),
                   ),
                 ),
               ],
@@ -143,10 +139,10 @@ class SavedCarsScreen extends StatelessWidget {
                     children: [
                       AppText(
                         car['name'],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.white,
+                          color: AppColors.textPrimary(context),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -154,14 +150,14 @@ class SavedCarsScreen extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.location_on,
-                            color: AppTheme.platinum,
+                            color: AppColors.textSecondary(context),
                             size: 14,
                           ),
                           const SizedBox(width: 4),
                           AppText(
                             car['location'],
                             style: TextStyle(
-                              color: AppTheme.platinum,
+                              color: AppColors.textSecondary(context),
                               fontSize: 12,
                             ),
                           ),
@@ -175,10 +171,10 @@ class SavedCarsScreen extends StatelessWidget {
                   children: [
                     AppText(
                       car['price'],
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.white,
+                        color: AppColors.textPrimary(context),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -193,7 +189,7 @@ class SavedCarsScreen extends StatelessWidget {
                         AppText(
                           car['rating'],
                           style: TextStyle(
-                            color: AppTheme.platinum,
+                            color: AppColors.textSecondary(context),
                             fontSize: 12,
                           ),
                         ),
@@ -223,14 +219,14 @@ class SavedCarsScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
-                      color: AppColors.white,
+                      color: AppColors.accent(context),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Text(
                       "Book Now",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: AppColors.black,
+                        color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

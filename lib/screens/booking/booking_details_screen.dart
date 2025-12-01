@@ -132,21 +132,24 @@ class BookingDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0D14),
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         title: Text(
           StringUtils.t('booking_details'),
-          style: const TextStyle(color: AppColors.white),
+          style: TextStyle(color: AppColors.textPrimary(context)),
         ),
-        backgroundColor: const Color(0xFF0A0D14),
+        backgroundColor: AppColors.background(context),
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
             onTap: () => Navigator.pop(context),
-            child: const CircleAvatar(
-              backgroundColor: AppColors.white,
-              child: Icon(Icons.arrow_back, color: AppColors.black),
+            child: CircleAvatar(
+              backgroundColor: AppColors.cardBackground(context),
+              child: Icon(
+                Icons.arrow_back,
+                color: AppColors.textPrimary(context),
+              ),
             ),
           ),
         ),
@@ -161,7 +164,7 @@ class BookingDetailsScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppTheme.navy,
+                color: AppColors.cardBackground(context),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -179,15 +182,18 @@ class BookingDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   AppText(
                     booking['carName'],
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.white,
+                      color: AppColors.textPrimary(context),
                     ),
                   ),
                   AppText(
                     booking['price'],
-                    style: TextStyle(fontSize: 16, color: AppTheme.softCyan),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: AppColors.accent(context),
+                    ),
                   ),
                 ],
               ),
@@ -196,7 +202,11 @@ class BookingDetailsScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Booking ID
-            _buildDetailRow(StringUtils.t('booking_id'), booking['id']),
+            _buildDetailRow(
+              StringUtils.t('booking_id'),
+              booking['id'],
+              context,
+            ),
 
             const SizedBox(height: 16),
 
@@ -204,6 +214,7 @@ class BookingDetailsScreen extends StatelessWidget {
             _buildDetailRow(
               'Dates',
               '${booking['startDate']} - ${booking['endDate']}',
+              context,
             ),
 
             const SizedBox(height: 16),
@@ -212,6 +223,7 @@ class BookingDetailsScreen extends StatelessWidget {
             _buildDetailRow(
               StringUtils.t('pickup_location'),
               booking['location'],
+              context,
             ),
 
             const SizedBox(height: 16),
@@ -220,6 +232,7 @@ class BookingDetailsScreen extends StatelessWidget {
             _buildDetailRow(
               StringUtils.t('dropoff_location'),
               booking['location'],
+              context,
             ),
 
             const SizedBox(height: 20),
@@ -229,23 +242,30 @@ class BookingDetailsScreen extends StatelessWidget {
               width: double.infinity,
               height: 200,
               decoration: BoxDecoration(
-                color: AppTheme.navy,
+                color: AppColors.cardBackground(context),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.location_on, size: 40, color: AppColors.white),
+                    Icon(
+                      Icons.location_on,
+                      size: 40,
+                      color: AppColors.textPrimary(context),
+                    ),
                     SizedBox(height: 8),
                     Text(
                       StringUtils.t('location_map'),
-                      style: TextStyle(color: AppColors.white70, fontSize: 16),
+                      style: TextStyle(
+                        color: AppColors.textSecondary(context),
+                        fontSize: 16,
+                      ),
                     ),
                     Text(
                       StringUtils.t('tap_to_view_map'),
-                      style: const TextStyle(
-                        color: AppColors.white54,
+                      style: TextStyle(
+                        color: AppColors.textTertiary(context),
                         fontSize: 12,
                       ),
                     ),
@@ -257,7 +277,11 @@ class BookingDetailsScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Payment Mode
-            _buildDetailRow(StringUtils.t('payment_mode'), 'Credit Card'),
+            _buildDetailRow(
+              StringUtils.t('payment_mode'),
+              'Credit Card',
+              context,
+            ),
 
             const SizedBox(height: 30),
 
@@ -273,8 +297,8 @@ class BookingDetailsScreen extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.white,
-                  foregroundColor: AppColors.black,
+                  backgroundColor: AppColors.accent(context),
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.all(16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -295,22 +319,25 @@ class BookingDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(String label, String value, BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.navy,
+        color: AppColors.cardBackground(context),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          AppText(label, style: TextStyle(color: AppTheme.platinum)),
+          AppText(
+            label,
+            style: TextStyle(color: AppColors.textSecondary(context)),
+          ),
           AppText(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: AppColors.white,
+              color: AppColors.textPrimary(context),
             ),
           ),
         ],
@@ -327,7 +354,7 @@ class MyBookingsScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => BookingBloc()..add(LoadBookingsEvent()),
       child: Container(
-        color: AppColors.darkBackground,
+        color: AppColors.background(context),
         child: Column(
           children: [
             // Header
@@ -335,8 +362,8 @@ class MyBookingsScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: AppText(
                 StringUtils.t('my_bookings'),
-                style: const TextStyle(
-                  color: AppColors.white,
+                style: TextStyle(
+                  color: AppColors.textPrimary(context),
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -426,13 +453,18 @@ class MyBookingsScreen extends StatelessWidget {
         margin: const EdgeInsets.only(right: 12),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.white : const Color(0xFF141820),
+          color: isSelected
+              ? AppColors.accent(context)
+              : AppColors.cardBackground(context),
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: AppColors.white24, width: 1),
+          border: Border.all(
+            color: AppColors.textSecondary(context).withOpacity(0.3),
+            width: 1,
+          ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.white.withOpacity(0.2),
+                    color: AppColors.accent(context).withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -442,7 +474,7 @@ class MyBookingsScreen extends StatelessWidget {
         child: AnimatedDefaultTextStyle(
           duration: const Duration(milliseconds: 300),
           style: TextStyle(
-            color: isSelected ? AppColors.black : AppColors.white,
+            color: isSelected ? Colors.white : AppColors.textPrimary(context),
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
           ),
@@ -457,7 +489,7 @@ class MyBookingsScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.navy,
+        color: AppColors.cardBackground(context),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -488,7 +520,10 @@ class MyBookingsScreen extends StatelessWidget {
                     ),
                     AppText(
                       '${booking['startDate']} - ${booking['endDate']}',
-                      style: TextStyle(color: AppTheme.platinum, fontSize: 12),
+                      style: TextStyle(
+                        color: AppColors.textSecondary(context),
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
@@ -514,9 +549,9 @@ class MyBookingsScreen extends StatelessWidget {
             children: [
               AppText(
                 booking['price'],
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.white,
+                  color: AppColors.textPrimary(context),
                 ),
               ),
               InkWell(
@@ -536,12 +571,15 @@ class MyBookingsScreen extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColors.white, width: 1.2),
+                    border: Border.all(
+                      color: AppColors.textPrimary(context),
+                      width: 1.2,
+                    ),
                   ),
-                  child: const Text(
+                  child: Text(
                     "View",
                     style: TextStyle(
-                      color: AppColors.white,
+                      color: AppColors.textPrimary(context),
                       fontWeight: FontWeight.w600,
                     ),
                   ),

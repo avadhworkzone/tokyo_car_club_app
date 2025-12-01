@@ -98,40 +98,49 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.darkBackground,
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppColors.cardBackground,
-        currentIndex: bottomIndex,
-        selectedItemColor: AppColors.blueAccent,
-        unselectedItemColor: AppColors.white54,
-        type: BottomNavigationBarType.fixed,
-        onTap: (i) => setState(() => bottomIndex = i),
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home_filled),
-            label: StringUtils.t('home'),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.explore),
-            label: StringUtils.t('explore'),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.calendar_month),
-            label: StringUtils.t('bookings'),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.favorite),
-            label: StringUtils.t('saved'),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person),
-            label: StringUtils.t('profile'),
-          ),
-        ],
-      ),
+    return WillPopScope(
+      onWillPop: () async {
+        if (bottomIndex != 0) {
+          setState(() => bottomIndex = 0);
+          return false;
+        }
+        return await _showExitDialog(context);
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background(context),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: AppColors.cardBackground(context),
+          currentIndex: bottomIndex,
+          selectedItemColor: AppColors.accent(context),
+          unselectedItemColor: AppColors.textTertiary(context),
+          type: BottomNavigationBarType.fixed,
+          onTap: (i) => setState(() => bottomIndex = i),
+          items: [
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.home_filled),
+              label: StringUtils.t('home'),
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.explore),
+              label: StringUtils.t('explore'),
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.calendar_month),
+              label: StringUtils.t('bookings'),
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.favorite),
+              label: StringUtils.t('saved'),
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.person),
+              label: StringUtils.t('profile'),
+            ),
+          ],
+        ),
 
-      body: SafeArea(child: _getBodyWidget()),
+        body: SafeArea(child: _getBodyWidget()),
+      ),
     );
   }
 
@@ -194,20 +203,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             children: [
                               Icon(
                                 Icons.location_on,
-                                color: AppColors.white,
+                                color: AppColors.textPrimary(context),
                                 size: 22,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 StringUtils.t('mumbai_india'),
-                                style: const TextStyle(
-                                  color: AppColors.white,
+                                style: TextStyle(
+                                  color: AppColors.textPrimary(context),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                               Icon(
                                 Icons.keyboard_arrow_down,
-                                color: AppColors.white,
+                                color: AppColors.textPrimary(context),
                               ),
                             ],
                           ),
@@ -237,9 +246,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             },
                             child: Stack(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.notifications_none,
-                                  color: AppColors.white,
+                                  color: AppColors.textPrimary(context),
                                   size: 28,
                                 ),
                                 Positioned(
@@ -310,11 +319,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     vertical: 14,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: AppColors.surface(context),
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.white.withOpacity(0.1),
+                        color: Colors.black.withOpacity(0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -322,12 +331,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.search, color: AppColors.black87),
+                      Icon(
+                        Icons.search,
+                        color: AppColors.textSecondary(context),
+                      ),
                       SizedBox(width: 10),
                       Text(
                         StringUtils.t('search_placeholder'),
-                        style: const TextStyle(
-                          color: AppColors.black54,
+                        style: TextStyle(
+                          color: AppColors.textSecondary(context),
                           fontSize: 15,
                         ),
                       ),
@@ -367,17 +379,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                           decoration: BoxDecoration(
                             color: isActive
-                                ? AppColors.white
-                                : AppColors.cardBackground,
+                                ? AppColors.accent(context)
+                                : AppColors.cardBackground(context),
                             borderRadius: BorderRadius.circular(30),
                             border: Border.all(
-                              color: AppColors.white24,
+                              color: AppColors.textTertiary(
+                                context,
+                              ).withOpacity(0.3),
                               width: 1,
                             ),
                             boxShadow: isActive
                                 ? [
                                     BoxShadow(
-                                      color: AppColors.white.withOpacity(0.2),
+                                      color: AppColors.accent(
+                                        context,
+                                      ).withOpacity(0.3),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -388,14 +404,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             duration: const Duration(milliseconds: 300),
                             style: TextStyle(
                               color: isActive
-                                  ? AppColors.black
-                                  : AppColors.white,
+                                  ? Colors.white
+                                  : AppColors.textPrimary(context),
                               fontSize: 14,
                               fontWeight: isActive
                                   ? FontWeight.bold
                                   : FontWeight.w500,
                             ),
-                            child: Text(categories[i]),
+                            child: Center(child: Text(categories[i])),
                           ),
                         ),
                       );
@@ -417,15 +433,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 height: 180,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  gradient: const LinearGradient(
-                    colors: [AppColors.darkBackground, AppColors.gradientEnd],
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.background(context),
+                      AppColors.gradientEnd(context),
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   image: const DecorationImage(
                     image: AssetImage("assets/images/car.png"),
                     fit: BoxFit.cover,
-                    opacity: 0.25,
+                    opacity: 0.50,
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -483,8 +502,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               opacity: value,
                               child: Text(
                                 StringUtils.t('bmw_m2'),
-                                style: const TextStyle(
-                                  color: AppColors.white,
+                                style: TextStyle(
+                                  color: AppColors.textPrimary(context),
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -513,8 +532,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   opacity: value,
                   child: Text(
                     StringUtils.t('popular_cars'),
-                    style: const TextStyle(
-                      color: AppColors.white,
+                    style: TextStyle(
+                      color: AppColors.textPrimary(context),
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                     ),
@@ -543,7 +562,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         margin: const EdgeInsets.only(bottom: 18),
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: AppColors.cardBackground,
+                          color: AppColors.cardBackground(context),
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
@@ -577,8 +596,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 children: [
                                   Text(
                                     StringUtils.t('audi_a6'),
-                                    style: const TextStyle(
-                                      color: AppColors.white,
+                                    style: TextStyle(
+                                      color: AppColors.textPrimary(context),
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -594,8 +613,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       const SizedBox(width: 4),
                                       Text(
                                         StringUtils.t('rating_48'),
-                                        style: const TextStyle(
-                                          color: AppColors.white70,
+                                        style: TextStyle(
+                                          color: AppColors.textSecondary(
+                                            context,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -603,8 +624,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   const SizedBox(height: 6),
                                   Text(
                                     StringUtils.t('price_per_day'),
-                                    style: const TextStyle(
-                                      color: AppColors.white,
+                                    style: TextStyle(
+                                      color: AppColors.textPrimary(context),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -656,14 +677,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: AppColors.white,
+                                    color: AppColors.textPrimary(context),
                                     width: 1.2,
                                   ),
                                 ),
                                 child: Text(
                                   StringUtils.t('view'),
-                                  style: const TextStyle(
-                                    color: AppColors.white,
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary(context),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -683,5 +704,58 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  Future<bool> _showExitDialog(BuildContext context) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: Theme.of(context).cardColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Text(
+                StringUtils.t('Exit app'),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              content: Text(
+                StringUtils.t('Sure to exit app'),
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(
+                    StringUtils.t('cancel'),
+                    style: TextStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text(
+                    StringUtils.t('exit'),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
   }
 }

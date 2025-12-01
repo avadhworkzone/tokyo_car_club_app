@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tokyo_car_club/core/utils/string_utils.dart';
 import 'package:tokyo_car_club/core/constants/app_colors.dart';
-import 'package:tokyo_car_club/core/theme/app_theme.dart';
 import 'package:tokyo_car_club/core/widgets/app_text.dart';
 import 'brand_cars_screen.dart';
 import 'filtered_cars_screen.dart';
@@ -13,14 +12,15 @@ class ExploreScreen extends StatefulWidget {
   State<ExploreScreen> createState() => _ExploreScreenState();
 }
 
-class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateMixin {
+class _ExploreScreenState extends State<ExploreScreen>
+    with TickerProviderStateMixin {
   late AnimationController _headerController;
   late AnimationController _contentController;
   late Animation<double> _headerFade;
   late Animation<Offset> _headerSlide;
   late Animation<double> _contentFade;
   late Animation<Offset> _contentSlide;
-  
+
   String? selectedBrand;
   String? selectedType;
   String? selectedLocation;
@@ -44,18 +44,24 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
     _headerFade = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _headerController, curve: Curves.easeOut),
     );
-    _headerSlide = Tween<Offset>(
-      begin: const Offset(0, -0.5),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _headerController, curve: Curves.easeOutCubic));
+    _headerSlide = Tween<Offset>(begin: const Offset(0, -0.5), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _headerController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     _contentFade = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _contentController, curve: Curves.easeOut),
     );
-    _contentSlide = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _contentController, curve: Curves.easeOutCubic));
+    _contentSlide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _contentController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     _headerController.forward();
     Future.delayed(const Duration(milliseconds: 200), () {
@@ -73,14 +79,12 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.darkBackground,
+      color: AppColors.background(context),
       child: SafeArea(
         child: Column(
           children: [
             _buildHeader(),
-            Expanded(
-              child: _buildContent(),
-            ),
+            Expanded(child: _buildContent()),
           ],
         ),
       ),
@@ -99,8 +103,8 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
             children: [
               AppText(
                 StringUtils.t('explore'),
-                style: const TextStyle(
-                  color: AppColors.white,
+                style: TextStyle(
+                  color: AppColors.textPrimary(context),
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -108,12 +112,19 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.cardBackground,
+                  color: AppColors.cardBackground(context),
                   borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.blueAccent.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.filter_list,
-                  color: AppColors.white,
+                  color: AppColors.blueAccent,
                   size: 20,
                 ),
               ),
@@ -133,7 +144,10 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
       {'name': 'Electric', 'count': 15},
     ];
     final locations = [
-      {'name': StringUtils.t('tokyo_station'), 'cars': StringUtils.t('cars_120')},
+      {
+        'name': StringUtils.t('tokyo_station'),
+        'cars': StringUtils.t('cars_120'),
+      },
       {'name': StringUtils.t('shibuya'), 'cars': StringUtils.t('cars_85')},
       {'name': StringUtils.t('harajuku'), 'cars': StringUtils.t('cars_95')},
     ];
@@ -171,8 +185,8 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
   Widget _buildSectionTitle(String title) {
     return AppText(
       title,
-      style: const TextStyle(
-        color: AppColors.white,
+      style: TextStyle(
+        color: AppColors.textPrimary(context),
         fontSize: 18,
         fontWeight: FontWeight.w600,
       ),
@@ -192,16 +206,29 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
               height: 140,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                gradient: const LinearGradient(
-                  colors: [AppColors.blueAccent, AppColors.gradientEnd],
+                gradient: LinearGradient(
+                  colors: Theme.of(context).brightness == Brightness.light
+                      ? [
+                          const Color(0xFF4FC3F7),
+                          const Color(0xFF29B6F6),
+                        ]
+                      : [
+                          AppColors.blueAccent,
+                          AppColors.gradientEnd(context),
+                        ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.blueAccent.withOpacity(0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
+                    color: AppColors.blueAccent.withOpacity(0.25),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
@@ -226,7 +253,10 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.orangeAccent,
                             borderRadius: BorderRadius.circular(12),
@@ -292,19 +322,25 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                       Navigator.push(
                         context,
                         PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) => BrandCarsScreen(brandName: brand),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            return SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(1.0, 0.0),
-                                end: Offset.zero,
-                              ).animate(CurvedAnimation(
-                                parent: animation,
-                                curve: Curves.easeOutCubic,
-                              )),
-                              child: child,
-                            );
-                          },
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  BrandCarsScreen(brandName: brand),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                                return SlideTransition(
+                                  position:
+                                      Tween<Offset>(
+                                        begin: const Offset(1.0, 0.0),
+                                        end: Offset.zero,
+                                      ).animate(
+                                        CurvedAnimation(
+                                          parent: animation,
+                                          curve: Curves.easeOutCubic,
+                                        ),
+                                      ),
+                                  child: child,
+                                );
+                              },
                         ),
                       );
                     },
@@ -313,15 +349,23 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                       width: 80,
                       margin: const EdgeInsets.only(right: 12),
                       decoration: BoxDecoration(
-                        color: isSelected ? AppColors.blueAccent : AppTheme.navy,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: isSelected ? [
+                        color: isSelected
+                            ? AppColors.blueAccent
+                            : AppColors.cardBackground(context),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          if (isSelected)
+                            BoxShadow(
+                              color: AppColors.blueAccent.withOpacity(0.4),
+                              blurRadius: 12,
+                              offset: const Offset(0, 6),
+                            ),
                           BoxShadow(
-                            color: AppColors.blueAccent.withOpacity(0.3),
+                            color: Colors.black.withOpacity(0.08),
                             blurRadius: 8,
-                            offset: const Offset(0, 4),
+                            offset: const Offset(0, 2),
                           ),
-                        ] : null,
+                        ],
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -331,12 +375,14 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: isSelected ? AppColors.white : AppColors.white.withOpacity(0.9),
-                              borderRadius: BorderRadius.circular(8),
+                              color: isSelected
+                                  ? Colors.white.withOpacity(0.2)
+                                  : AppColors.blueAccent.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Icon(
                               Icons.directions_car,
-                              color: isSelected ? AppColors.blueAccent : AppColors.black,
+                              color: AppColors.white,
                               size: 24,
                             ),
                           ),
@@ -344,9 +390,13 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                           Text(
                             brand,
                             style: TextStyle(
-                              color: isSelected ? AppColors.white : AppColors.white70,
+                              color: isSelected
+                                  ? Colors.white
+                                  : AppColors.textSecondary(context),
                               fontSize: 11,
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
                             ),
                           ),
                         ],
@@ -362,7 +412,10 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
     );
   }
 
-  Widget _buildCarTypesGrid(List<Map<String, dynamic>> carTypes, String? selectedType) {
+  Widget _buildCarTypesGrid(
+    List<Map<String, dynamic>> carTypes,
+    String? selectedType,
+  ) {
     final icons = {
       'SUV': Icons.directions_car,
       'Sedan': Icons.time_to_leave,
@@ -398,45 +451,53 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                     Navigator.push(
                       context,
                       PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) => FilteredCarsScreen(
-                          title: '$typeName Cars',
-                          filterType: 'type',
-                          filterValue: typeName,
-                        ),
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          return SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(1.0, 0.0),
-                              end: Offset.zero,
-                            ).animate(CurvedAnimation(
-                              parent: animation,
-                              curve: Curves.easeOutCubic,
-                            )),
-                            child: child,
-                          );
-                        },
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            FilteredCarsScreen(
+                              title: '$typeName Cars',
+                              filterType: 'type',
+                              filterValue: typeName,
+                            ),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position:
+                                    Tween<Offset>(
+                                      begin: const Offset(1.0, 0.0),
+                                      end: Offset.zero,
+                                    ).animate(
+                                      CurvedAnimation(
+                                        parent: animation,
+                                        curve: Curves.easeOutCubic,
+                                      ),
+                                    ),
+                                child: child,
+                              );
+                            },
                       ),
                     );
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.blueAccent.withOpacity(0.2) : AppTheme.navy,
+                      color: isSelected
+                          ? AppColors.blueAccent.withOpacity(0.2)
+                          : AppColors.cardBackground(context),
                       borderRadius: BorderRadius.circular(12),
-                      border: isSelected ? Border.all(
-                        color: AppColors.blueAccent,
-                        width: 2,
-                      ) : null,
+                      border: isSelected
+                          ? Border.all(color: AppColors.blueAccent, width: 2)
+                          : null,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: isSelected ? AppColors.blueAccent : AppColors.blueAccent.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(8),
+                            color: isSelected
+                                ? AppColors.blueAccent
+                                : AppColors.blueAccent.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             icons[typeName] ?? Icons.directions_car,
@@ -448,15 +509,19 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                         Text(
                           typeName,
                           style: TextStyle(
-                            color: isSelected ? AppColors.blueAccent : AppColors.white,
+                            color: isSelected
+                                ? AppColors.blueAccent
+                                : AppColors.textPrimary(context),
                             fontSize: 14,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.w600,
                           ),
                         ),
                         Text(
                           '${type['count']} cars',
                           style: TextStyle(
-                            color: AppTheme.platinum,
+                            color: AppColors.textSecondary(context),
                             fontSize: 11,
                           ),
                         ),
@@ -472,7 +537,10 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
     );
   }
 
-  Widget _buildPopularLocations(List<Map<String, String>> locations, String? selectedLocation) {
+  Widget _buildPopularLocations(
+    List<Map<String, String>> locations,
+    String? selectedLocation,
+  ) {
     return Column(
       children: locations.asMap().entries.map((entry) {
         final index = entry.key;
@@ -493,23 +561,28 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                     Navigator.push(
                       context,
                       PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) => FilteredCarsScreen(
-                          title: 'Cars in $locationName',
-                          filterType: 'location',
-                          filterValue: locationName,
-                        ),
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          return SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(1.0, 0.0),
-                              end: Offset.zero,
-                            ).animate(CurvedAnimation(
-                              parent: animation,
-                              curve: Curves.easeOutCubic,
-                            )),
-                            child: child,
-                          );
-                        },
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            FilteredCarsScreen(
+                              title: 'Cars in $locationName',
+                              filterType: 'location',
+                              filterValue: locationName,
+                            ),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position:
+                                    Tween<Offset>(
+                                      begin: const Offset(1.0, 0.0),
+                                      end: Offset.zero,
+                                    ).animate(
+                                      CurvedAnimation(
+                                        parent: animation,
+                                        curve: Curves.easeOutCubic,
+                                      ),
+                                    ),
+                                child: child,
+                              );
+                            },
                       ),
                     );
                   },
@@ -518,12 +591,22 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.blueAccent.withOpacity(0.1) : AppTheme.navy,
-                      borderRadius: BorderRadius.circular(12),
-                      border: isSelected ? Border.all(
-                        color: AppColors.blueAccent,
-                        width: 1,
-                      ) : null,
+                      color: isSelected
+                          ? AppColors.blueAccent.withOpacity(0.08)
+                          : AppColors.cardBackground(context),
+                      borderRadius: BorderRadius.circular(16),
+                      border: isSelected
+                          ? Border.all(color: AppColors.blueAccent, width: 2)
+                          : Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
+                      boxShadow: [
+                        BoxShadow(
+                          color: isSelected 
+                              ? AppColors.blueAccent.withOpacity(0.15)
+                              : Colors.black.withOpacity(0.04),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
                     child: Row(
                       children: [
@@ -532,12 +615,14 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: isSelected ? AppColors.blueAccent : AppColors.blueAccent.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(8),
+                            color: isSelected
+                                ? AppColors.blueAccent
+                                : AppColors.blueAccent.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
                             Icons.location_on,
-                            color: AppColors.white,
+                            color: AppColors.textPrimary(context),
                             size: 20,
                           ),
                         ),
@@ -549,7 +634,9 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                               Text(
                                 locationName,
                                 style: TextStyle(
-                                  color: isSelected ? AppColors.blueAccent : AppColors.white,
+                                  color: isSelected
+                                      ? AppColors.blueAccent
+                                      : AppColors.textPrimary(context),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -557,7 +644,7 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                               Text(
                                 location['cars']!,
                                 style: TextStyle(
-                                  color: AppTheme.platinum,
+                                  color: AppColors.textSecondary(context),
                                   fontSize: 12,
                                 ),
                               ),
@@ -569,7 +656,9 @@ class _ExploreScreenState extends State<ExploreScreen> with TickerProviderStateM
                           turns: isSelected ? 0.25 : 0,
                           child: Icon(
                             Icons.arrow_forward_ios,
-                            color: isSelected ? AppColors.blueAccent : AppColors.white54,
+                            color: isSelected
+                                ? AppColors.blueAccent
+                                : AppColors.textTertiary(context),
                             size: 16,
                           ),
                         ),

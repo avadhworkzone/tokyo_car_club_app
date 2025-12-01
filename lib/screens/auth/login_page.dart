@@ -5,6 +5,7 @@ import 'logic/auth_bloc.dart';
 import 'logic/auth_state.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../core/constants/app_colors.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -33,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         // ⭐ SAME BACKGROUND COLOR AS SPLASH (dark navy)
-        backgroundColor: const Color(0xFF0A0D14),
+        backgroundColor: AppColors.background(context),
         resizeToAvoidBottomInset: false,
 
         body: BlocConsumer<AuthBloc, AuthState>(
@@ -54,19 +55,19 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 90),
 
                 // TITLE TEXT (white)
-                const Text(
+                Text(
                   "Welcome Back",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary(context),
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 6),
 
-                const Text(
+                Text(
                   "Sign in to continue renting your dream car",
-                  style: TextStyle(color: Colors.white70, fontSize: 15),
+                  style: TextStyle(color: AppColors.textSecondary(context), fontSize: 15),
                 ),
 
                 const SizedBox(height: 40),
@@ -75,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF141820), // lighter navy
+                    color: AppColors.cardBackground(context),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -91,12 +92,12 @@ class _LoginPageState extends State<LoginPage> {
                       AppTextField(
                         hintText: "Email",
                         controller: email,
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.email_outlined,
-                          color: Colors.white,
+                          color: AppColors.textPrimary(context),
                         ),
-                        hintColor: Colors.white54,
-                        textColor: Colors.white,
+                        hintColor: AppColors.textTertiary(context),
+                        textColor: AppColors.textPrimary(context),
                         onChanged: (v) =>
                             setState(() => emailError = Validators.email(v)),
                       ),
@@ -108,12 +109,12 @@ class _LoginPageState extends State<LoginPage> {
                         hintText: "Password",
                         controller: password,
                         isPassword: true,
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.lock_outline,
-                          color: Colors.white,
+                          color: AppColors.textPrimary(context),
                         ),
-                        hintColor: Colors.white54,
-                        textColor: Colors.white,
+                        hintColor: AppColors.textTertiary(context),
+                        textColor: AppColors.textPrimary(context),
                         onChanged: (v) =>
                             setState(() => passError = Validators.password(v)),
                       ),
@@ -142,9 +143,9 @@ class _LoginPageState extends State<LoginPage> {
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                            disabledBackgroundColor: Colors.white24,
+                            backgroundColor: AppColors.accent(context),
+                            foregroundColor: Colors.white,
+                            disabledBackgroundColor: AppColors.textSecondary(context).withOpacity(0.3),
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -174,10 +175,10 @@ class _LoginPageState extends State<LoginPage> {
                         MaterialPageRoute(builder: (_) => const SignupPage()),
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       "Create a new account",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary(context),
                         fontSize: 15,
                         decoration: TextDecoration.underline,
                       ),

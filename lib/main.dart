@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'app.dart';
+import 'theme/theme_cubit.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const TokyoCarClubApp());
+  
+  // Initialize theme cubit with saved preferences
+  final themeCubit = await ThemeCubit.create();
+  
+  runApp(TokyoCarClubApp(themeCubit: themeCubit));
 }

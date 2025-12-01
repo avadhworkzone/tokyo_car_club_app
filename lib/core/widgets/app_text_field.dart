@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants/app_colors.dart';
 
 class AppTextField extends StatelessWidget {
   final String hintText;
@@ -44,32 +45,32 @@ class AppTextField extends StatelessWidget {
       onChanged: onChanged,
 
       style: TextStyle(
-        color: textColor ?? Colors.black, // ⭐ default
+        color: textColor ?? AppColors.textPrimary(context),
       ),
 
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(
-          color: hintColor ?? Colors.grey, // ⭐ default
+          color: hintColor ?? AppColors.textTertiary(context),
         ),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
+        fillColor: AppColors.cardBackground(context).withOpacity(0.3),
 
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Colors.white24),
+          borderSide: BorderSide(color: AppColors.textTertiary(context)),
         ),
 
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Colors.white24),
+          borderSide: BorderSide(color: AppColors.textTertiary(context)),
         ),
 
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Colors.white),
+          borderSide: BorderSide(color: AppColors.accent(context)),
         ),
       ),
     );

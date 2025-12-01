@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/constants/app_colors.dart';
 import 'logic/auth_bloc.dart';
 import 'logic/auth_event.dart';
 import 'logic/auth_state.dart';
@@ -38,7 +39,7 @@ class _SignupPageState extends State<SignupPage> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         // ⭐ Same background color as Login screen
-        backgroundColor: const Color(0xFF0A0D14),
+        backgroundColor: AppColors.background(context),
         resizeToAvoidBottomInset: false,
 
         body: BlocConsumer<AuthBloc, AuthState>(
@@ -56,10 +57,10 @@ class _SignupPageState extends State<SignupPage> {
                 const SizedBox(height: 80),
 
                 // ⭐ Page Title (White)
-                const Text(
+                Text(
                   "Create Account",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary(context),
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                   ),
@@ -67,9 +68,9 @@ class _SignupPageState extends State<SignupPage> {
 
                 const SizedBox(height: 8),
 
-                const Text(
+                Text(
                   "Join the club and rent luxury cars anytime",
-                  style: TextStyle(color: Colors.white70, fontSize: 15),
+                  style: TextStyle(color: AppColors.textSecondary(context), fontSize: 15),
                 ),
 
                 const SizedBox(height: 40),
@@ -78,7 +79,7 @@ class _SignupPageState extends State<SignupPage> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF141820),
+                    color: AppColors.cardBackground(context),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -95,12 +96,12 @@ class _SignupPageState extends State<SignupPage> {
                       AppTextField(
                         hintText: "Full Name",
                         controller: name,
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.person_outline,
-                          color: Colors.white,
+                          color: AppColors.textPrimary(context),
                         ),
-                        hintColor: Colors.white54,
-                        textColor: Colors.white,
+                        hintColor: AppColors.textTertiary(context),
+                        textColor: AppColors.textPrimary(context),
                         onChanged: (v) =>
                             setState(() => nameError = Validators.name(v)),
                       ),
@@ -112,12 +113,12 @@ class _SignupPageState extends State<SignupPage> {
                       AppTextField(
                         hintText: "Email",
                         controller: email,
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.email_outlined,
-                          color: Colors.white,
+                          color: AppColors.textPrimary(context),
                         ),
-                        hintColor: Colors.white54,
-                        textColor: Colors.white,
+                        hintColor: AppColors.textTertiary(context),
+                        textColor: AppColors.textPrimary(context),
                         onChanged: (v) =>
                             setState(() => emailError = Validators.email(v)),
                       ),
@@ -130,12 +131,12 @@ class _SignupPageState extends State<SignupPage> {
                         hintText: "Password",
                         controller: password,
                         isPassword: true,
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.lock_outline,
-                          color: Colors.white,
+                          color: AppColors.textPrimary(context),
                         ),
-                        hintColor: Colors.white54,
-                        textColor: Colors.white,
+                        hintColor: AppColors.textTertiary(context),
+                        textColor: AppColors.textPrimary(context),
                         onChanged: (v) =>
                             setState(() => passError = Validators.password(v)),
                       ),
@@ -159,9 +160,9 @@ class _SignupPageState extends State<SignupPage> {
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                            disabledBackgroundColor: Colors.white24,
+                            backgroundColor: AppColors.accent(context),
+                            foregroundColor: Colors.white,
+                            disabledBackgroundColor: AppColors.textSecondary(context).withOpacity(0.3),
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -186,10 +187,10 @@ class _SignupPageState extends State<SignupPage> {
                 Center(
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: const Text(
+                    child: Text(
                       "Already have an account? Sign In",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary(context),
                         decoration: TextDecoration.underline,
                         fontSize: 15,
                       ),

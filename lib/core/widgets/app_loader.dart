@@ -12,9 +12,9 @@ class AppLoader extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const CircularProgressIndicator(
+          CircularProgressIndicator(
             strokeWidth: 3,
-            color: AppColors.accent,
+            color: AppColors.accent(context),
           ),
           const SizedBox(height: 12),
           AppText(

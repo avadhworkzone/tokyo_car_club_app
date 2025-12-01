@@ -13,6 +13,8 @@ class CarDetailsPage extends StatefulWidget {
 class _CarDetailsPageState extends State<CarDetailsPage>
     with TickerProviderStateMixin {
   bool isFavorite = false;
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
   late AnimationController _favoriteController;
   late Animation<double> _scaleAnimation;
   late Animation<Color?> _colorAnimation;
@@ -53,7 +55,7 @@ class _CarDetailsPageState extends State<CarDetailsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0D14),
+      backgroundColor: AppColors.background(context),
 
       body: CustomScrollView(
         slivers: [
@@ -61,7 +63,7 @@ class _CarDetailsPageState extends State<CarDetailsPage>
           SliverAppBar(
             expandedHeight: 300,
             pinned: true,
-            backgroundColor: const Color(0xFF0A0D14),
+            backgroundColor: AppColors.background(context),
             leading: _circleButton(
               Icons.arrow_back,
               () => Navigator.pop(context),
@@ -77,12 +79,12 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                       return Transform.scale(
                         scale: _scaleAnimation.value,
                         child: CircleAvatar(
-                          backgroundColor: AppColors.white,
+                          backgroundColor: AppColors.cardBackground(context),
                           child: Icon(
                             isFavorite ? Icons.favorite : Icons.favorite_border,
                             color: isFavorite
-                                ? _colorAnimation.value ?? AppColors.black
-                                : AppColors.black,
+                                ? Colors.red
+                                : AppColors.textPrimary(context),
                             size: 24,
                           ),
                         ),
@@ -97,7 +99,9 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                 fit: StackFit.expand,
                 children: [
                   Image.asset("assets/images/car.png", fit: BoxFit.cover),
-                  Container(color: AppColors.black45),
+                  Container(
+                    color: AppColors.background(context).withOpacity(0.4),
+                  ),
                 ],
               ),
             ),
@@ -107,17 +111,19 @@ class _CarDetailsPageState extends State<CarDetailsPage>
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.all(18),
-              decoration: const BoxDecoration(
-                color: Color(0xFF141820),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              decoration: BoxDecoration(
+                color: AppColors.cardBackground(context),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(28),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     StringUtils.t('bmw_5_series'),
-                    style: const TextStyle(
-                      color: AppColors.white,
+                    style: TextStyle(
+                      color: AppColors.textPrimary(context),
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -127,11 +133,17 @@ class _CarDetailsPageState extends State<CarDetailsPage>
 
                   Row(
                     children: [
-                      Icon(Icons.star, color: AppColors.amber, size: 20),
+                      Icon(
+                        Icons.star,
+                        color: AppColors.accent(context),
+                        size: 20,
+                      ),
                       SizedBox(width: 4),
                       Text(
                         StringUtils.t('reviews_120'),
-                        style: const TextStyle(color: AppColors.white70),
+                        style: TextStyle(
+                          color: AppColors.textSecondary(context),
+                        ),
                       ),
                     ],
                   ),
@@ -157,7 +169,7 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                   // DESCRIPTION
                   Text(
                     StringUtils.t('bmw_description'),
-                    style: const TextStyle(color: AppColors.white70),
+                    style: TextStyle(color: AppColors.textSecondary(context)),
                   ),
 
                   const SizedBox(height: 24),
@@ -165,8 +177,8 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                   // AVAILABILITY SECTION
                   Text(
                     StringUtils.t('availability'),
-                    style: const TextStyle(
-                      color: AppColors.white,
+                    style: TextStyle(
+                      color: AppColors.textPrimary(context),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -177,7 +189,7 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                   // DATE PICKER
                   GestureDetector(
                     onTap: () async {
-                      await showDatePicker(
+                      final date = await showDatePicker(
                         context: context,
                         initialDate: DateTime.now(),
                         firstDate: DateTime.now(),
@@ -185,42 +197,55 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                         builder: (context, child) {
                           return Theme(
                             data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.dark(
-                                primary: AppColors.white,
-                                surface: Color(0xFF141820),
+                              colorScheme: ColorScheme.dark(
+                                primary: AppColors.accent(context),
+                                surface: AppColors.cardBackground(context),
                               ),
                             ),
                             child: child!,
                           );
                         },
                       );
+                      if (date != null) {
+                        setState(() {
+                          selectedDate = date;
+                        });
+                      }
                     },
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1C1F28),
+                        color: AppColors.background(context),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.white24),
+                        border: Border.all(
+                          color: AppColors.textSecondary(
+                            context,
+                          ).withOpacity(0.3),
+                        ),
                       ),
                       child: Row(
                         children: [
                           Icon(
                             Icons.calendar_today,
-                            color: AppColors.white,
+                            color: AppColors.textPrimary(context),
                             size: 20,
                           ),
                           SizedBox(width: 12),
                           Text(
-                            StringUtils.t('select_date'),
-                            style: const TextStyle(
-                              color: AppColors.white70,
+                            selectedDate != null
+                                ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
+                                : StringUtils.t('select_date'),
+                            style: TextStyle(
+                              color: selectedDate != null
+                                  ? AppColors.textPrimary(context)
+                                  : AppColors.textSecondary(context),
                               fontSize: 16,
                             ),
                           ),
                           Spacer(),
                           Icon(
                             Icons.arrow_forward_ios,
-                            color: AppColors.white54,
+                            color: AppColors.textTertiary(context),
                             size: 16,
                           ),
                         ],
@@ -233,7 +258,7 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                   // TIME PICKER
                   GestureDetector(
                     onTap: () async {
-                      await showTimePicker(
+                      final time = await showTimePicker(
                         context: context,
                         initialTime: TimeOfDay.now(),
                         hourLabelText: 'Hour',
@@ -245,9 +270,9 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                             ).copyWith(alwaysUse24HourFormat: false),
                             child: Theme(
                               data: Theme.of(context).copyWith(
-                                colorScheme: const ColorScheme.dark(
-                                  primary: AppColors.white,
-                                  surface: Color(0xFF141820),
+                                colorScheme: ColorScheme.dark(
+                                  primary: AppColors.accent(context),
+                                  surface: AppColors.cardBackground(context),
                                 ),
                               ),
                               child: child!,
@@ -255,33 +280,46 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                           );
                         },
                       );
+                      if (time != null) {
+                        setState(() {
+                          selectedTime = time;
+                        });
+                      }
                     },
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1C1F28),
+                        color: AppColors.background(context),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.white24),
+                        border: Border.all(
+                          color: AppColors.textSecondary(
+                            context,
+                          ).withOpacity(0.3),
+                        ),
                       ),
                       child: Row(
                         children: [
                           Icon(
                             Icons.access_time,
-                            color: AppColors.white,
+                            color: AppColors.textPrimary(context),
                             size: 20,
                           ),
                           SizedBox(width: 12),
                           Text(
-                            StringUtils.t('select_time'),
-                            style: const TextStyle(
-                              color: AppColors.white70,
+                            selectedTime != null
+                                ? selectedTime!.format(context)
+                                : StringUtils.t('select_time'),
+                            style: TextStyle(
+                              color: selectedTime != null
+                                  ? AppColors.textPrimary(context)
+                                  : AppColors.textSecondary(context),
                               fontSize: 16,
                             ),
                           ),
                           Spacer(),
                           Icon(
                             Icons.arrow_forward_ios,
-                            color: AppColors.white54,
+                            color: AppColors.textTertiary(context),
                             size: 16,
                           ),
                         ],
@@ -295,7 +333,7 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                   Container(
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C1F28),
+                      color: AppColors.cardBackground(context),
                       borderRadius: BorderRadius.circular(18),
                     ),
                     child: Column(
@@ -303,16 +341,18 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                       children: [
                         Text(
                           StringUtils.t('price_4500_day'),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
-                            color: AppColors.white,
+                            color: AppColors.textPrimary(context),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           StringUtils.t('deposit_10000'),
-                          style: const TextStyle(color: AppColors.white70),
+                          style: TextStyle(
+                            color: AppColors.textSecondary(context),
+                          ),
                         ),
                       ],
                     ),
@@ -334,8 +374,8 @@ class _CarDetailsPageState extends State<CarDetailsPage>
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(16),
-                        backgroundColor: AppColors.white,
-                        foregroundColor: AppColors.black,
+                        backgroundColor: AppColors.accent(context),
+                        foregroundColor: Colors.white,
                       ),
                       child: Text(
                         StringUtils.t('continue_booking'),
@@ -359,9 +399,11 @@ class _CarDetailsPageState extends State<CarDetailsPage>
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
         onTap: onTap,
-        child: CircleAvatar(
-          backgroundColor: AppColors.white,
-          child: Icon(icon, color: AppColors.black),
+        child: Builder(
+          builder: (context) => CircleAvatar(
+            backgroundColor: AppColors.surface(context),
+            child: Icon(icon, color: AppColors.textPrimary(context)),
+          ),
         ),
       ),
     );
@@ -378,11 +420,14 @@ class _infoIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, color: AppColors.white),
+        Icon(icon, color: AppColors.textPrimary(context)),
         const SizedBox(height: 4),
         Text(
           text,
-          style: const TextStyle(color: AppColors.white70, fontSize: 12),
+          style: TextStyle(
+            color: AppColors.textSecondary(context),
+            fontSize: 12,
+          ),
         ),
       ],
     );
@@ -434,14 +479,14 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0D14),
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A0D14),
+        backgroundColor: AppColors.background(context),
         elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.white),
+        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
         title: Text(
           StringUtils.t('booking_summary'),
-          style: const TextStyle(color: AppColors.white),
+          style: TextStyle(color: AppColors.textPrimary(context)),
         ),
       ),
 
@@ -464,7 +509,7 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
                       curve: Curves.easeOutBack,
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF141820),
+                        color: AppColors.cardBackground(context),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
@@ -492,8 +537,8 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
                               children: [
                                 Text(
                                   StringUtils.t('bmw_5_series'),
-                                  style: const TextStyle(
-                                    color: AppColors.white,
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary(context),
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -501,15 +546,15 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
                                 const SizedBox(height: 6),
                                 Text(
                                   StringUtils.t('luxury_sedan_auto_petrol'),
-                                  style: const TextStyle(
-                                    color: AppColors.white70,
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary(context),
                                   ),
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
                                   StringUtils.t('price_4500_day'),
-                                  style: const TextStyle(
-                                    color: AppColors.white,
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary(context),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -543,7 +588,7 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF141820),
+                color: AppColors.cardBackground(context),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Column(
@@ -551,16 +596,16 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
                 children: [
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.location_on,
-                        color: AppColors.white,
+                        color: AppColors.textPrimary(context),
                         size: 20,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         StringUtils.t('mumbai_airport_t2'),
-                        style: const TextStyle(
-                          color: AppColors.white,
+                        style: TextStyle(
+                          color: AppColors.textPrimary(context),
                           fontSize: 16,
                         ),
                       ),
@@ -570,13 +615,15 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
                   Container(
                     height: 100,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C1F28),
+                      color: AppColors.background(context),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
                       child: Text(
                         StringUtils.t('map_view'),
-                        style: const TextStyle(color: AppColors.white54),
+                        style: TextStyle(
+                          color: AppColors.textTertiary(context),
+                        ),
                       ),
                     ),
                   ),
@@ -591,7 +638,7 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF141820),
+                color: AppColors.cardBackground(context),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Column(
@@ -600,7 +647,9 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
                   _fareRow(StringUtils.t('taxes_fees'), "₹1,200"),
                   if (insuranceSelected)
                     _fareRow(StringUtils.t('insurance'), "₹500"),
-                  const Divider(color: AppColors.white24),
+                  Divider(
+                    color: AppColors.textSecondary(context).withOpacity(0.3),
+                  ),
                   _fareRow(
                     StringUtils.t('total'),
                     "₹${insuranceSelected ? '10,700' : '10,200'}",
@@ -620,12 +669,12 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF141820),
+                  color: AppColors.cardBackground(context),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: insuranceSelected
-                        ? AppColors.white
-                        : AppColors.white24,
+                        ? AppColors.accent(context)
+                        : AppColors.textSecondary(context).withOpacity(0.3),
                   ),
                 ),
                 child: Row(
@@ -635,20 +684,20 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
                           ? Icons.check_circle
                           : Icons.circle_outlined,
                       color: insuranceSelected
-                          ? AppColors.white
-                          : AppColors.white54,
+                          ? AppColors.accent(context)
+                          : AppColors.textSecondary(context),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         StringUtils.t('comprehensive_insurance'),
-                        style: const TextStyle(color: AppColors.white),
+                        style: TextStyle(color: AppColors.textPrimary(context)),
                       ),
                     ),
-                    const Text(
+                    Text(
                       "₹500",
                       style: TextStyle(
-                        color: AppColors.white,
+                        color: AppColors.textPrimary(context),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -725,8 +774,8 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.white,
-                      foregroundColor: AppColors.black,
+                      backgroundColor: AppColors.accent(context),
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.all(16),
                       elevation: 8,
                       shadowColor: AppColors.white.withOpacity(0.3),
@@ -754,8 +803,8 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
     padding: const EdgeInsets.only(bottom: 12),
     child: Text(
       text,
-      style: const TextStyle(
-        color: AppColors.white,
+      style: TextStyle(
+        color: AppColors.textPrimary(context),
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
@@ -765,10 +814,13 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
   Widget _box(String text) => Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: const Color(0xFF141820),
+      color: AppColors.cardBackground(context),
       borderRadius: BorderRadius.circular(14),
     ),
-    child: Text(text, style: const TextStyle(color: AppColors.white70)),
+    child: Text(
+      text,
+      style: TextStyle(color: AppColors.textSecondary(context)),
+    ),
   );
 
   Widget _fareRow(String label, String amount, {bool isTotal = false}) =>
@@ -801,19 +853,24 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF141820),
+        color: AppColors.cardBackground(context),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: selectedPayment == title ? AppColors.white : AppColors.white24,
+          color: selectedPayment == title
+              ? AppColors.accent(context)
+              : AppColors.textSecondary(context).withOpacity(0.3),
         ),
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.white),
+          Icon(icon, color: AppColors.textPrimary(context)),
           const SizedBox(width: 12),
           Text(
             title,
-            style: const TextStyle(color: AppColors.white, fontSize: 16),
+            style: TextStyle(
+              color: AppColors.textPrimary(context),
+              fontSize: 16,
+            ),
           ),
           const Spacer(),
           Icon(
@@ -821,8 +878,8 @@ class _BookingSummaryPageState extends State<BookingSummaryPage>
                 ? Icons.radio_button_checked
                 : Icons.radio_button_off,
             color: selectedPayment == title
-                ? AppColors.white
-                : AppColors.white54,
+                ? AppColors.accent(context)
+                : AppColors.textSecondary(context),
           ),
         ],
       ),
@@ -875,15 +932,29 @@ class _PaymentScreenState extends State<PaymentScreen>
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        backgroundColor: const Color(0xFF0A0D14),
+        backgroundColor: AppColors.background(context),
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: const Color(0xFF0A0D14),
+          backgroundColor: AppColors.background(context),
           elevation: 0,
-          iconTheme: const IconThemeData(color: AppColors.white),
-          title: const Text(
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: () => Navigator.pop(context),
+              child: CircleAvatar(
+                backgroundColor: AppColors.surface(context),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: AppColors.textPrimary(context),
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+          iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
+          title: Text(
             "Payment",
-            style: TextStyle(color: AppColors.white),
+            style: TextStyle(color: AppColors.textPrimary(context)),
           ),
         ),
         body: SingleChildScrollView(
@@ -892,10 +963,10 @@ class _PaymentScreenState extends State<PaymentScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // PAYMENT METHODS
-              const Text(
+              Text(
                 "Select Payment Method",
                 style: TextStyle(
-                  color: AppColors.white,
+                  color: AppColors.textPrimary(context),
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -915,10 +986,10 @@ class _PaymentScreenState extends State<PaymentScreen>
               const SizedBox(height: 24),
 
               // CARD FORM
-              const Text(
+              Text(
                 "Card Details",
                 style: TextStyle(
-                  color: AppColors.white,
+                  color: AppColors.textPrimary(context),
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -934,12 +1005,15 @@ class _PaymentScreenState extends State<PaymentScreen>
                     curve: Curves.easeOutBack,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF141820),
+                      color: AppColors.cardBackground(context),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppColors.blueAccent, width: 2),
+                      border: Border.all(
+                        color: AppColors.accent(context),
+                        width: 2,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.blueAccent.withOpacity(0.2),
+                          color: AppColors.accent(context).withOpacity(0.2),
                           blurRadius: 15,
                           offset: const Offset(0, 8),
                         ),
@@ -976,16 +1050,16 @@ class _PaymentScreenState extends State<PaymentScreen>
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF141820),
+                  color: AppColors.cardBackground(context),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       "Order Summary",
                       style: TextStyle(
-                        color: AppColors.white,
+                        color: AppColors.textPrimary(context),
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -993,7 +1067,9 @@ class _PaymentScreenState extends State<PaymentScreen>
                     const SizedBox(height: 12),
                     _summaryRow("BMW 5 Series (2 days)", "₹9,000"),
                     _summaryRow("Taxes & Fees", "₹1,200"),
-                    const Divider(color: AppColors.white24),
+                    Divider(
+                      color: AppColors.textSecondary(context).withOpacity(0.3),
+                    ),
                     _summaryRow("Total Amount", "₹10,200", isTotal: true),
                   ],
                 ),
@@ -1021,11 +1097,13 @@ class _PaymentScreenState extends State<PaymentScreen>
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.white,
-                          foregroundColor: AppColors.black,
+                          backgroundColor: AppColors.accent(context),
+                          foregroundColor: Colors.white,
                           padding: const EdgeInsets.all(16),
                           elevation: 12,
-                          shadowColor: AppColors.white.withOpacity(0.4),
+                          shadowColor: AppColors.accent(
+                            context,
+                          ).withOpacity(0.4),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -1056,25 +1134,32 @@ class _PaymentScreenState extends State<PaymentScreen>
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF141820),
+          color: AppColors.cardBackground(context),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? AppColors.blueAccent : AppColors.white24,
+            color: isSelected
+                ? AppColors.accent(context)
+                : AppColors.textSecondary(context).withOpacity(0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.white),
+            Icon(icon, color: AppColors.textPrimary(context)),
             const SizedBox(width: 12),
             Text(
               title,
-              style: const TextStyle(color: AppColors.white, fontSize: 16),
+              style: TextStyle(
+                color: AppColors.textPrimary(context),
+                fontSize: 16,
+              ),
             ),
             const Spacer(),
             Icon(
               isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-              color: isSelected ? AppColors.blueAccent : AppColors.white54,
+              color: isSelected
+                  ? AppColors.accent(context)
+                  : AppColors.textSecondary(context),
             ),
           ],
         ),
@@ -1089,17 +1174,17 @@ class _PaymentScreenState extends State<PaymentScreen>
     children: [
       Text(
         label,
-        style: const TextStyle(color: AppColors.white70, fontSize: 14),
+        style: TextStyle(color: AppColors.textSecondary(context), fontSize: 14),
       ),
       const SizedBox(height: 8),
       TextField(
         controller: controller,
-        style: const TextStyle(color: AppColors.white),
+        style: TextStyle(color: AppColors.textPrimary(context)),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: const TextStyle(color: AppColors.white54),
+          hintStyle: TextStyle(color: AppColors.textTertiary(context)),
           filled: true,
-          fillColor: const Color(0xFF1C1F28),
+          fillColor: AppColors.background(context),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -1119,14 +1204,16 @@ class _PaymentScreenState extends State<PaymentScreen>
             Text(
               label,
               style: TextStyle(
-                color: isTotal ? AppColors.white : AppColors.white70,
+                color: isTotal
+                    ? AppColors.textPrimary(context)
+                    : AppColors.textSecondary(context),
                 fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
               ),
             ),
             Text(
               amount,
               style: TextStyle(
-                color: AppColors.white,
+                color: AppColors.textPrimary(context),
                 fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
               ),
             ),

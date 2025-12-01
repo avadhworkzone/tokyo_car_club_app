@@ -72,7 +72,7 @@ class _BrandCarsScreenState extends State<BrandCarsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.darkBackground,
+      backgroundColor: AppColors.background(context),
       body: SafeArea(
         child: Column(
           children: [
@@ -98,14 +98,14 @@ class _BrandCarsScreenState extends State<BrandCarsScreen>
               GestureDetector(
                 onTap: () => Navigator.pop(context),
                 child: Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.cardBackground,
+                    color: AppColors.cardBackground(context),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.arrow_back,
-                    color: AppColors.white,
+                    color: AppColors.textPrimary(context),
                     size: 20,
                   ),
                 ),
@@ -117,15 +117,18 @@ class _BrandCarsScreenState extends State<BrandCarsScreen>
                   children: [
                     AppText(
                       '${widget.brandName} Cars',
-                      style: const TextStyle(
-                        color: AppColors.white,
+                      style: TextStyle(
+                        color: AppColors.textPrimary(context),
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     AppText(
                       '24 cars available',
-                      style: TextStyle(color: AppTheme.platinum, fontSize: 14),
+                      style: TextStyle(
+                        color: AppColors.textSecondary(context),
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
@@ -133,10 +136,14 @@ class _BrandCarsScreenState extends State<BrandCarsScreen>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.cardBackground,
+                  color: AppColors.cardBackground(context),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.tune, color: AppColors.white, size: 20),
+                child: Icon(
+                  Icons.tune,
+                  color: AppColors.textPrimary(context),
+                  size: 20,
+                ),
               ),
             ],
           ),
@@ -176,22 +183,28 @@ class _BrandCarsScreenState extends State<BrandCarsScreen>
                         ),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? AppColors.blueAccent
-                              : AppTheme.navy,
+                              ? AppColors.accent(context)
+                              : AppColors.cardBackground(context),
                           borderRadius: BorderRadius.circular(20),
                           border: isSelected
                               ? null
-                              : Border.all(color: AppColors.white24),
+                              : Border.all(
+                                  color: AppColors.textSecondary(
+                                    context,
+                                  ).withOpacity(0.3),
+                                ),
                         ),
-                        child: Text(
-                          filter,
-                          style: TextStyle(
-                            color: isSelected
-                                ? AppColors.white
-                                : AppColors.white70,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.w500,
+                        child: Center(
+                          child: Text(
+                            filter,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Colors.white
+                                  : AppColors.textSecondary(context),
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
@@ -246,11 +259,11 @@ class _BrandCarsScreenState extends State<BrandCarsScreen>
               margin: const EdgeInsets.only(bottom: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppTheme.navy,
+                color: AppColors.cardBackground(context),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.black.withOpacity(0.2),
+                    color: AppColors.textPrimary(context).withOpacity(0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -278,12 +291,14 @@ class _BrandCarsScreenState extends State<BrandCarsScreen>
                         child: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: AppColors.black54,
+                            color: AppColors.background(
+                              context,
+                            ).withOpacity(0.8),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.favorite_border,
-                            color: AppColors.white,
+                            color: AppColors.textPrimary(context),
                             size: 18,
                           ),
                         ),
@@ -293,8 +308,8 @@ class _BrandCarsScreenState extends State<BrandCarsScreen>
                   const SizedBox(height: 12),
                   Text(
                     car['name'] ?? '',
-                    style: const TextStyle(
-                      color: AppColors.white,
+                    style: TextStyle(
+                      color: AppColors.textPrimary(context),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -302,25 +317,32 @@ class _BrandCarsScreenState extends State<BrandCarsScreen>
                   const SizedBox(height: 4),
                   Text(
                     car['type'] ?? '',
-                    style: TextStyle(color: AppTheme.platinum, fontSize: 14),
+                    style: TextStyle(
+                      color: AppColors.textSecondary(context),
+                      fontSize: 14,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.star, color: AppColors.amber, size: 16),
+                      Icon(
+                        Icons.star,
+                        color: AppColors.accent(context),
+                        size: 16,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         car['rating'] ?? '',
-                        style: const TextStyle(
-                          color: AppColors.white70,
+                        style: TextStyle(
+                          color: AppColors.textSecondary(context),
                           fontSize: 14,
                         ),
                       ),
                       const Spacer(),
                       Text(
                         car['price'] ?? '',
-                        style: const TextStyle(
-                          color: AppColors.white,
+                        style: TextStyle(
+                          color: AppColors.textPrimary(context),
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),

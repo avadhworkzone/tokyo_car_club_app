@@ -4,6 +4,7 @@ import 'package:tokyo_car_club/core/utils/string_utils.dart';
 import 'package:tokyo_car_club/core/constants/app_colors.dart';
 import 'package:tokyo_car_club/core/theme/app_theme.dart';
 import 'package:tokyo_car_club/core/widgets/app_text.dart';
+import '../../theme/theme_cubit.dart';
 import 'logic/settings_bloc.dart';
 import 'logic/settings_event.dart';
 import 'logic/settings_state.dart';
@@ -36,13 +37,10 @@ class _SettingsScreenState extends State<SettingsScreen>
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.4),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
     _startAnimations();
   }
 
@@ -63,23 +61,23 @@ class _SettingsScreenState extends State<SettingsScreen>
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SettingsBloc()..add(LoadSettingsEvent()),
+      create: (context) =>
+          SettingsBloc(context.read<ThemeCubit>())..add(LoadSettingsEvent()),
       child: Scaffold(
-        backgroundColor: AppColors.darkBackground,
         appBar: AppBar(
-          title: Text(
-            StringUtils.t('settings'),
-            style: const TextStyle(color: AppColors.white),
-          ),
-          backgroundColor: AppColors.darkBackground,
-          elevation: 0,
+          title: Text(StringUtils.t('settings')),
           leading: Padding(
-            padding: const EdgeInsets.all(13.0),
+            padding: const EdgeInsets.all(8.0),
             child: InkWell(
               onTap: () => Navigator.pop(context),
-              child: const CircleAvatar(
-                backgroundColor: AppColors.white,
-                child: Icon(Icons.arrow_back, color: AppColors.black, size: 20),
+              child: Builder(
+                builder: (context) => CircleAvatar(
+                  backgroundColor: AppColors.surface(context),
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: AppColors.textPrimary(context),
+                  ),
+                ),
               ),
             ),
           ),
@@ -94,7 +92,9 @@ class _SettingsScreenState extends State<SettingsScreen>
               return Center(
                 child: AppText(
                   state.message,
-                  style: const TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                 ),
               );
             }
@@ -104,9 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                 opacity: _fadeAnimation,
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: _buildAnimatedSettingsItems(state),
-                  ),
+                  child: Column(children: _buildAnimatedSettingsItems(state, context)),
                 ),
               );
             }
@@ -118,13 +116,40 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  List<Widget> _buildAnimatedSettingsItems(SettingsLoaded state) {
+  List<Widget> _buildAnimatedSettingsItems(SettingsLoaded state, BuildContext blocContext) {
     final items = [
-      {'type': 'toggle', 'title': StringUtils.t('dark_mode'), 'icon': Icons.dark_mode, 'value': state.isDarkMode},
-      {'type': 'menu', 'title': StringUtils.t('language'), 'icon': Icons.language, 'trailing': state.language, 'onTap': () => _showLanguageDialog(context, state.language)},
-      {'type': 'menu', 'title': StringUtils.t('change_password'), 'icon': Icons.lock, 'onTap': () => _showChangePasswordDialog(context)},
-      {'type': 'menu', 'title': StringUtils.t('privacy_policy'), 'icon': Icons.privacy_tip, 'onTap': () {}},
-      {'type': 'menu', 'title': StringUtils.t('delete_account'), 'icon': Icons.delete_forever, 'onTap': () => _showDeleteAccountDialog(context), 'isDestructive': true},
+      {
+        'type': 'toggle',
+        'title': StringUtils.t('dark_mode'),
+        'icon': Icons.dark_mode,
+        'value': state.isDarkMode,
+      },
+      {
+        'type': 'menu',
+        'title': StringUtils.t('language'),
+        'icon': Icons.language,
+        'trailing': state.language,
+        'onTap': () => _showLanguageDialog(context, state.language, blocContext.read<SettingsBloc>()),
+      },
+      {
+        'type': 'menu',
+        'title': StringUtils.t('change_password'),
+        'icon': Icons.lock,
+        'onTap': () => _showChangePasswordDialog(context),
+      },
+      {
+        'type': 'menu',
+        'title': StringUtils.t('privacy_policy'),
+        'icon': Icons.privacy_tip,
+        'onTap': () {},
+      },
+      {
+        'type': 'menu',
+        'title': StringUtils.t('delete_account'),
+        'icon': Icons.delete_forever,
+        'onTap': () => _showDeleteAccountDialog(context),
+        'isDestructive': true,
+      },
     ];
 
     return items.asMap().entries.map((entry) {
@@ -148,7 +173,9 @@ class _SettingsScreenState extends State<SettingsScreen>
                       item['icon'] as IconData,
                       item['value'] as bool,
                       (value) {
-                        context.read<SettingsBloc>().add(ToggleDarkModeEvent(value));
+                        blocContext.read<SettingsBloc>().add(
+                          ToggleDarkModeEvent(value),
+                        );
                       },
                     )
                   : _buildMenuItem(
@@ -159,7 +186,12 @@ class _SettingsScreenState extends State<SettingsScreen>
                       trailing: item['trailing'] != null
                           ? Text(
                               item['trailing'] as String,
-                              style: TextStyle(color: AppTheme.platinum, fontSize: 14),
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.6),
+                                fontSize: 14,
+                              ),
                             )
                           : null,
                       isDestructive: item['isDestructive'] as bool? ?? false,
@@ -183,11 +215,11 @@ class _SettingsScreenState extends State<SettingsScreen>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.navy,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -198,27 +230,27 @@ class _SettingsScreenState extends State<SettingsScreen>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.blueAccent.withOpacity(0.2),
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: AppColors.blueAccent, size: 20),
+            child: Icon(
+              icon,
+              color: Theme.of(context).colorScheme.primary,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: AppText(
               title,
-              style: const TextStyle(
-                color: AppColors.white,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: AppColors.blueAccent,
-          ),
+          Switch(value: value, onChanged: onChanged),
         ],
       ),
     );
@@ -243,11 +275,11 @@ class _SettingsScreenState extends State<SettingsScreen>
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppTheme.navy,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -259,13 +291,17 @@ class _SettingsScreenState extends State<SettingsScreen>
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: isDestructive
-                        ? AppColors.error.withOpacity(0.2)
-                        : AppColors.blueAccent.withOpacity(0.2),
+                        ? Colors.red.withOpacity(0.2)
+                        : Theme.of(
+                            context,
+                          ).colorScheme.primary.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     icon,
-                    color: isDestructive ? AppColors.error : AppColors.blueAccent,
+                    color: isDestructive
+                        ? Colors.red
+                        : Theme.of(context).colorScheme.primary,
                     size: 20,
                   ),
                 ),
@@ -274,19 +310,20 @@ class _SettingsScreenState extends State<SettingsScreen>
                   child: AppText(
                     title,
                     style: TextStyle(
-                      color: isDestructive ? AppColors.error : AppColors.white,
+                      color: isDestructive
+                          ? Colors.red
+                          : Theme.of(context).colorScheme.onSurface,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
-                if (trailing != null) ...[
-                  trailing,
-                  const SizedBox(width: 8),
-                ],
+                if (trailing != null) ...[trailing, const SizedBox(width: 8)],
                 Icon(
                   Icons.arrow_forward_ios,
-                  color: AppColors.white54,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.5),
                   size: 16,
                 ),
               ],
@@ -297,21 +334,21 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  void _showLanguageDialog(BuildContext context, String currentLanguage) {
+  void _showLanguageDialog(BuildContext context, String currentLanguage, SettingsBloc settingsBloc) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          backgroundColor: AppTheme.navy,
+          backgroundColor: Theme.of(context).cardColor,
           title: Text(
             StringUtils.t('select_language'),
-            style: const TextStyle(color: AppColors.white),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildLanguageOption(context, 'English', currentLanguage),
-              _buildLanguageOption(context, '日本語', currentLanguage),
+              _buildLanguageOption(dialogContext, 'English', currentLanguage, settingsBloc),
+              _buildLanguageOption(dialogContext, '日本語', currentLanguage, settingsBloc),
             ],
           ),
         );
@@ -319,13 +356,18 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
-  Widget _buildLanguageOption(BuildContext context, String language, String currentLanguage) {
+  Widget _buildLanguageOption(
+    BuildContext context,
+    String language,
+    String currentLanguage,
+    SettingsBloc settingsBloc,
+  ) {
     final isSelected = language == currentLanguage;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          context.read<SettingsBloc>().add(ChangeLanguageEvent(language));
+          settingsBloc.add(ChangeLanguageEvent(language));
           Navigator.pop(context);
         },
         child: Container(
@@ -336,13 +378,21 @@ class _SettingsScreenState extends State<SettingsScreen>
                 child: Text(
                   language,
                   style: TextStyle(
-                    color: isSelected ? AppColors.blueAccent : AppColors.white,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onSurface,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
               ),
               if (isSelected)
-                const Icon(Icons.check, color: AppColors.blueAccent, size: 20),
+                Icon(
+                  Icons.check,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 20,
+                ),
             ],
           ),
         ),
@@ -355,28 +405,34 @@ class _SettingsScreenState extends State<SettingsScreen>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: AppTheme.navy,
+          backgroundColor: Theme.of(context).cardColor,
           title: Text(
             StringUtils.t('change_password'),
-            style: const TextStyle(color: AppColors.white),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
           content: Text(
             StringUtils.t('change_password_message'),
-            style: TextStyle(color: AppTheme.platinum),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
                 StringUtils.t('cancel'),
-                style: const TextStyle(color: AppColors.white54),
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.6),
+                ),
               ),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
                 StringUtils.t('change'),
-                style: const TextStyle(color: AppColors.blueAccent),
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
             ),
           ],
@@ -390,28 +446,34 @@ class _SettingsScreenState extends State<SettingsScreen>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: AppTheme.navy,
+          backgroundColor: Theme.of(context).cardColor,
           title: Text(
             StringUtils.t('delete_account'),
-            style: const TextStyle(color: AppColors.white),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
           content: Text(
             StringUtils.t('delete_account_warning'),
-            style: TextStyle(color: AppTheme.platinum),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
                 StringUtils.t('cancel'),
-                style: const TextStyle(color: AppColors.white54),
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.6),
+                ),
               ),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
                 StringUtils.t('delete'),
-                style: const TextStyle(color: AppColors.error),
+                style: const TextStyle(color: Colors.red),
               ),
             ),
           ],

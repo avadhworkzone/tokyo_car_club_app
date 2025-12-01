@@ -9,9 +9,9 @@ class FilteredCarsScreen extends StatefulWidget {
   final String title;
   final String filterType; // 'type', 'location'
   final String filterValue;
-  
+
   const FilteredCarsScreen({
-    super.key, 
+    super.key,
     required this.title,
     required this.filterType,
     required this.filterValue,
@@ -21,16 +21,22 @@ class FilteredCarsScreen extends StatefulWidget {
   State<FilteredCarsScreen> createState() => _FilteredCarsScreenState();
 }
 
-class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProviderStateMixin {
+class _FilteredCarsScreenState extends State<FilteredCarsScreen>
+    with TickerProviderStateMixin {
   late AnimationController _headerController;
   late AnimationController _contentController;
   late Animation<double> _headerFade;
   late Animation<Offset> _headerSlide;
   late Animation<double> _contentFade;
-  
+
   String selectedSort = 'Price: Low to High';
-  final sortOptions = ['Price: Low to High', 'Price: High to Low', 'Rating', 'Newest'];
-  
+  final sortOptions = [
+    'Price: Low to High',
+    'Price: High to Low',
+    'Rating',
+    'Newest',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -50,10 +56,13 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
     _headerFade = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _headerController, curve: Curves.easeOut),
     );
-    _headerSlide = Tween<Offset>(
-      begin: const Offset(0, -0.5),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _headerController, curve: Curves.easeOutCubic));
+    _headerSlide = Tween<Offset>(begin: const Offset(0, -0.5), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _headerController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     _contentFade = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _contentController, curve: Curves.easeOut),
@@ -75,7 +84,7 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.darkBackground,
+      backgroundColor: AppColors.background(context),
       body: SafeArea(
         child: Column(
           children: [
@@ -97,21 +106,33 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              GestureDetector(
+              InkWell(
                 onTap: () => Navigator.pop(context),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.cardBackground,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_back,
-                    color: AppColors.white,
-                    size: 20,
+                child: Builder(
+                  builder: (context) => CircleAvatar(
+                    backgroundColor: AppColors.surface(context),
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: AppColors.textPrimary(context),
+                    ),
                   ),
                 ),
               ),
+              // GestureDetector(
+              //   onTap: () => Navigator.pop(context),
+              //   child: Container(
+              //     padding: const EdgeInsets.all(8),
+              //     decoration: BoxDecoration(
+              //       color: AppColors.cardBackground(context),
+              //       borderRadius: BorderRadius.circular(12),
+              //     ),
+              //     child: Icon(
+              //       Icons.arrow_back,
+              //       color: AppColors.textPrimary(context),
+              //       size: 20,
+              //     ),
+              //   ),
+              // ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -119,8 +140,8 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
                   children: [
                     AppText(
                       widget.title,
-                      style: const TextStyle(
-                        color: AppColors.white,
+                      style: TextStyle(
+                        color: AppColors.textPrimary(context),
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -128,7 +149,7 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
                     AppText(
                       '${_getFilteredCars().length} cars available',
                       style: TextStyle(
-                        color: AppTheme.platinum,
+                        color: AppColors.textSecondary(context),
                         fontSize: 14,
                       ),
                     ),
@@ -138,12 +159,12 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.cardBackground,
+                  color: AppColors.cardBackground(context),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.map,
-                  color: AppColors.white,
+                  color: AppColors.textPrimary(context),
                   size: 20,
                 ),
               ),
@@ -179,18 +200,35 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         margin: const EdgeInsets.only(right: 12),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isSelected ? AppColors.blueAccent : AppTheme.navy,
-                          borderRadius: BorderRadius.circular(20),
-                          border: isSelected ? null : Border.all(color: AppColors.white24),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
                         ),
-                        child: Text(
-                          option,
-                          style: TextStyle(
-                            color: isSelected ? AppColors.white : AppColors.white70,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                            fontSize: 12,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.accent(context)
+                              : AppColors.cardBackground(context),
+                          borderRadius: BorderRadius.circular(20),
+                          border: isSelected
+                              ? null
+                              : Border.all(
+                                  color: AppColors.textSecondary(
+                                    context,
+                                  ).withOpacity(0.3),
+                                ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            option,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Colors.white
+                                  : AppColors.textSecondary(context),
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       ),
@@ -207,7 +245,7 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
 
   Widget _buildCarsList() {
     final cars = _getSortedCars();
-    
+
     return FadeTransition(
       opacity: _contentFade,
       child: ListView.builder(
@@ -228,19 +266,25 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
                       Navigator.push(
                         context,
                         PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) => const CarDetailsPage(),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            return SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(1.0, 0.0),
-                                end: Offset.zero,
-                              ).animate(CurvedAnimation(
-                                parent: animation,
-                                curve: Curves.easeOutCubic,
-                              )),
-                              child: child,
-                            );
-                          },
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const CarDetailsPage(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                                return SlideTransition(
+                                  position:
+                                      Tween<Offset>(
+                                        begin: const Offset(1.0, 0.0),
+                                        end: Offset.zero,
+                                      ).animate(
+                                        CurvedAnimation(
+                                          parent: animation,
+                                          curve: Curves.easeOutCubic,
+                                        ),
+                                      ),
+                                  child: child,
+                                );
+                              },
                         ),
                       );
                     },
@@ -248,11 +292,13 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
                       margin: const EdgeInsets.only(bottom: 16),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppTheme.navy,
+                        color: AppColors.cardBackground(context),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.black.withOpacity(0.2),
+                            color: AppColors.textPrimary(
+                              context,
+                            ).withOpacity(0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -278,8 +324,8 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
                               children: [
                                 Text(
                                   car['name'] ?? '',
-                                  style: const TextStyle(
-                                    color: AppColors.white,
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary(context),
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -288,24 +334,31 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
                                 Text(
                                   car['type'] ?? '',
                                   style: TextStyle(
-                                    color: AppTheme.platinum,
+                                    color: AppColors.textSecondary(context),
                                     fontSize: 12,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
                                 Row(
                                   children: [
-                                    const Icon(Icons.star, color: AppColors.amber, size: 14),
+                                    Icon(
+                                      Icons.star,
+                                      color: AppColors.accent(context),
+                                      size: 14,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       car['rating'] ?? '',
-                                      style: const TextStyle(color: AppColors.white70, fontSize: 12),
+                                      style: TextStyle(
+                                        color: AppColors.textSecondary(context),
+                                        fontSize: 12,
+                                      ),
                                     ),
                                     const Spacer(),
                                     Text(
                                       car['price'] ?? '',
-                                      style: const TextStyle(
-                                        color: AppColors.white,
+                                      style: TextStyle(
+                                        color: AppColors.textPrimary(context),
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -319,12 +372,14 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: AppColors.black54,
+                              color: AppColors.background(
+                                context,
+                              ).withOpacity(0.8),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.favorite_border,
-                              color: AppColors.white,
+                              color: AppColors.textPrimary(context),
                               size: 16,
                             ),
                           ),
@@ -343,36 +398,98 @@ class _FilteredCarsScreenState extends State<FilteredCarsScreen> with TickerProv
 
   List<Map<String, String>> _getFilteredCars() {
     final allCars = [
-      {'name': 'BMW X5', 'type': 'SUV', 'rating': '4.8', 'price': '₹5,200', 'location': 'Tokyo Station'},
-      {'name': 'Audi A6', 'type': 'Sedan', 'rating': '4.7', 'price': '₹4,800', 'location': 'Shibuya'},
-      {'name': 'Mercedes S-Class', 'type': 'Luxury', 'rating': '4.9', 'price': '₹8,500', 'location': 'Harajuku'},
-      {'name': 'Tesla Model 3', 'type': 'Electric', 'rating': '4.6', 'price': '₹6,200', 'location': 'Tokyo Station'},
-      {'name': 'Toyota Prius', 'type': 'Electric', 'rating': '4.5', 'price': '₹3,500', 'location': 'Shibuya'},
-      {'name': 'Honda CR-V', 'type': 'SUV', 'rating': '4.4', 'price': '₹4,200', 'location': 'Harajuku'},
-      {'name': 'BMW 7 Series', 'type': 'Luxury', 'rating': '4.8', 'price': '₹7,800', 'location': 'Tokyo Station'},
-      {'name': 'Audi Q7', 'type': 'SUV', 'rating': '4.7', 'price': '₹6,500', 'location': 'Shibuya'},
+      {
+        'name': 'BMW X5',
+        'type': 'SUV',
+        'rating': '4.8',
+        'price': '₹5,200',
+        'location': 'Tokyo Station',
+      },
+      {
+        'name': 'Audi A6',
+        'type': 'Sedan',
+        'rating': '4.7',
+        'price': '₹4,800',
+        'location': 'Shibuya',
+      },
+      {
+        'name': 'Mercedes S-Class',
+        'type': 'Luxury',
+        'rating': '4.9',
+        'price': '₹8,500',
+        'location': 'Harajuku',
+      },
+      {
+        'name': 'Tesla Model 3',
+        'type': 'Electric',
+        'rating': '4.6',
+        'price': '₹6,200',
+        'location': 'Tokyo Station',
+      },
+      {
+        'name': 'Toyota Prius',
+        'type': 'Electric',
+        'rating': '4.5',
+        'price': '₹3,500',
+        'location': 'Shibuya',
+      },
+      {
+        'name': 'Honda CR-V',
+        'type': 'SUV',
+        'rating': '4.4',
+        'price': '₹4,200',
+        'location': 'Harajuku',
+      },
+      {
+        'name': 'BMW 7 Series',
+        'type': 'Luxury',
+        'rating': '4.8',
+        'price': '₹7,800',
+        'location': 'Tokyo Station',
+      },
+      {
+        'name': 'Audi Q7',
+        'type': 'SUV',
+        'rating': '4.7',
+        'price': '₹6,500',
+        'location': 'Shibuya',
+      },
     ];
 
     if (widget.filterType == 'type') {
       return allCars.where((car) => car['type'] == widget.filterValue).toList();
     } else if (widget.filterType == 'location') {
-      return allCars.where((car) => car['location'] == widget.filterValue).toList();
+      return allCars
+          .where((car) => car['location'] == widget.filterValue)
+          .toList();
     }
     return allCars;
   }
 
   List<Map<String, String>> _getSortedCars() {
     final cars = _getFilteredCars();
-    
+
     switch (selectedSort) {
       case 'Price: Low to High':
-        cars.sort((a, b) => _extractPrice(a['price'] ?? '').compareTo(_extractPrice(b['price'] ?? '')));
+        cars.sort(
+          (a, b) => _extractPrice(
+            a['price'] ?? '',
+          ).compareTo(_extractPrice(b['price'] ?? '')),
+        );
         break;
       case 'Price: High to Low':
-        cars.sort((a, b) => _extractPrice(b['price'] ?? '').compareTo(_extractPrice(a['price'] ?? '')));
+        cars.sort(
+          (a, b) => _extractPrice(
+            b['price'] ?? '',
+          ).compareTo(_extractPrice(a['price'] ?? '')),
+        );
         break;
       case 'Rating':
-        cars.sort((a, b) => double.parse(b['rating'] ?? '0').compareTo(double.parse(a['rating'] ?? '0')));
+        cars.sort(
+          (a, b) => double.parse(
+            b['rating'] ?? '0',
+          ).compareTo(double.parse(a['rating'] ?? '0')),
+        );
         break;
     }
     return cars;

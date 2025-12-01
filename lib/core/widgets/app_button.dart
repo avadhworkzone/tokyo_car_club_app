@@ -62,7 +62,7 @@ class AppButton extends StatelessWidget {
       onPressed: isButtonEnabled ? onPressed : null,
       style: ElevatedButton.styleFrom(
         backgroundColor:
-        isButtonEnabled ? AppColors.accent : Colors.grey.shade700,
+        isButtonEnabled ? AppColors.accent(context) : Colors.grey.shade700,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),

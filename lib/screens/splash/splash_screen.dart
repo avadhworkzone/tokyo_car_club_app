@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../../core/constants/app_colors.dart';
 
 import '../auth/login_page.dart';
 
@@ -25,9 +26,10 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(seconds: 2),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
     _controller.forward();
 
@@ -49,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // looks premium
+      backgroundColor: AppColors.background(context),
 
       body: Stack(
         children: [
@@ -57,10 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
           Positioned.fill(
             child: FadeTransition(
               opacity: _fadeAnimation,
-              child: Image.asset(
-                "assets/images/splash.png",
-                fit: BoxFit.cover,
-              ),
+              child: Image.asset("assets/images/splash.png", fit: BoxFit.cover),
             ),
           ),
 
@@ -72,7 +71,7 @@ class _SplashScreenState extends State<SplashScreen>
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    Colors.black.withOpacity(0.6),
+                    AppColors.background(context).withOpacity(0.6),
                     Colors.transparent,
                   ],
                 ),
@@ -89,11 +88,11 @@ class _SplashScreenState extends State<SplashScreen>
               child: FadeTransition(
                 opacity: _fadeAnimation,
                 child: Column(
-                  children: const [
+                  children: [
                     Text(
                       "TOKYO CAR CLUB",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary(context),
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
@@ -103,7 +102,7 @@ class _SplashScreenState extends State<SplashScreen>
                     Text(
                       "Luxury Cars • Easy Booking",
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: AppColors.textSecondary(context),
                         fontSize: 16,
                         letterSpacing: 1,
                       ),
